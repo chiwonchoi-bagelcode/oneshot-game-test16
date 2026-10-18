@@ -250,5 +250,6 @@
  "up.slide.label": "내리막 가속",
  "up.magnet.label": "끌어오는 거리",
  "up.glide.label": "떨어지는 속도",
- "up.scarf.label": "버티기"
+ "up.scarf.label": "버티기",
+ "res.moreUnlocks": "새 기능 {n}개가 더 열렸어요 — 마을에서 확인해요"
 }

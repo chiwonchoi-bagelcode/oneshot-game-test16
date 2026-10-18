@@ -316,7 +316,7 @@ export class RunScene {
         break;
       }
       case 'fever': {
-        this.word(t('fx.fever'), { size: 34, color: '#9fe6ff', life: 1.4 });
+        this.word(t('fx.fever'), { size: 36, color: '#ffe27a', life: 1.6 });
         au.play('fever');
         au.setFever(true);
         hp.pulse('strong');
@@ -351,10 +351,19 @@ export class RunScene {
         au.play('geyser');
         hp.pulse('medium');
         this.cam.shake(6, 0.3);
-        for (let i = 0; i < 4; i++) this.parts.spawn({ sprite: 'plume_' + i, x: e.x, y: sim.island.heightAt(e.x), frames: ['plume_0', 'plume_1', 'plume_2', 'plume_3', 'plume_0', 'plume_1'], fps: 10, life: 0.8, scale: 1.6, scale1: 2.0, alpha: 0.9 - i * 0.15 });
+        // a tall steam blast: a column of plumes shooting up behind the penguin, plus spray
+        const gy = sim.island.heightAt(e.x);
+        for (let i = 0; i < 7; i++) this.parts.spawn({ sprite: 'plume_' + (i % 4), x: e.x + (Math.random() - 0.5) * 30, y: gy + i * 40, vy: 900 + i * 260, drag: 1.6, frames: ['plume_0', 'plume_1', 'plume_2', 'plume_3', 'plume_0', 'plume_1'], fps: 10, life: 1.0 + i * 0.06, scale: 2.0 + i * 0.25, scale1: 3.0 + i * 0.3, alpha: 0.95 - i * 0.08 });
+        for (let i = 0; i < 18; i++) this.parts.spawn({ color: i % 3 ? '#ffffff' : '#bfefff', w: 10, h: 10, x: e.x, y: gy + 40, vx: (Math.random() - 0.5) * 700, vy: 900 + Math.random() * 1300, grav: 2600, life: 0.9, drag: 0.4 });
+        this.flash = Math.max(this.flash, 0.35);
         break;
       }
-      case 'wind': au.play('gust'); break;
+      case 'wind': {
+        au.play('gust');
+        // a burst of streaks around the penguin so the push reads
+        for (let i = 0; i < 14; i++) this.parts.spawn({ color: '#ffffff', w: 6, h: 34 + Math.random() * 30, x: p.x + (Math.random() - 0.5) * 220, y: p.y - 120 - Math.random() * 120, vy: 1400 + Math.random() * 600, vx: 80, life: 0.55, drag: 0.8, alpha: 0.85 });
+        break;
+      }
       case 'danger': {
         au.play('danger');
         hp.pulse('light');

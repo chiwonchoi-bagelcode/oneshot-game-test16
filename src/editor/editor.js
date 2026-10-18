@@ -363,7 +363,7 @@ function runValidate() {
   const lv = level();
   const st = checkStructure(lv);
   let html = `<b>${lv.id}</b> structure: ${st.errors.length ? '<span class="bad">' + st.errors.length + ' errors</span>' : '<span class="ok">ok</span>'}\n`;
-  for (const e of st.errors) html += `<span class="bad">  ✗ ${e}</span>\n`;
+  for (const e of st.errors) html += `<span class="bad">  x ${e}</span>\n`;
   for (const w of st.warnings) html += `<span class="warn">  ! ${w}</span>\n`;
   const t0 = performance.now();
   const r = checkClearable(levels, cur, balance, { seeds: 5 });

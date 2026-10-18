@@ -80,6 +80,7 @@ export class UI {
       p.onClose?.();
     }
     this.layer.classList.add('hidden');
+    this.toastEl.classList.remove('low');
     this.busy = false;
   }
 

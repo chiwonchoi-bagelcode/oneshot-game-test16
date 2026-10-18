@@ -291,7 +291,7 @@ export function windSVG(frame = 0) {
       <path d="M${x},${y} q30,-40 0,-70 q-24,-22 -4,-50" fill="none" stroke="#bfe0ff" stroke-width="3" stroke-linecap="round" opacity="0.9"/>`;
   }
   for (let i = 0; i < 3; i++) {
-    const y = 330 - ((i * 120 + frame * 40) % 330);
+    const y = 340 - ((i * 120 + frame * 40) % 300); // stays inside the cell on every frame
     body += `<path d="M${130 + i * 8},${y} l10,-14 l6,10" fill="#fff" stroke="${PAL.inkSoft}" stroke-width="2"/>`;
   }
   return wrap(W, H, [], body, { filter: false });
@@ -605,15 +605,23 @@ export function snowballSVG(frame = 0) {
   return wrap(W, H, [rad(g, [[0, '#ffffff'], [0.7, PAL.snow], [1, PAL.snowShade]], 0.35, 0.3, 0.85)], body, { seed: 251 });
 }
 
-// tutorial hand: a mitten-y cartoon hand with the index finger pointing down
+// tutorial hand: index finger raised at the side of the fist (thumb out on one side, three folded
+// fingers on the other), leaning so it reads as "tap here" at any size
 export function handSVG(pressed = false) {
   const W = 192, H = 256;
   const dy = pressed ? 10 : 0;
-  const body = `<g transform="translate(0,${dy})">
-    <path d="M78,40 Q78,18 96,18 Q114,18 114,40 L114,118 Q132,104 148,116 Q164,128 158,150 L150,196 Q142,236 100,240 Q58,242 46,206 L32,150 Q26,128 44,122 Q58,118 70,132 L78,140 Z" fill="#ffe6d5" stroke="${PAL.ink}" stroke-width="7" stroke-linejoin="round"/>
-    <path d="M114,118 L114,150 M134,112 Q136,128 132,150" fill="none" stroke="${PAL.ink}" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
-    <path d="M88,30 Q96,24 104,30" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
-    <path d="M58,206 Q100,226 146,200 L150,224 Q100,252 52,228 Z" fill="${PAL.scarf}" stroke="${PAL.ink}" stroke-width="6" stroke-linejoin="round"/>
+  const squash = pressed ? 'scale(1.04,0.94)' : '';
+  const skin = '#ffe6d5', shade = '#f3c6ad';
+  const body = `<g transform="translate(96,${18 + dy}) rotate(7) scale(0.9) ${squash} translate(-96,-18)">
+    <path d="M80,40 Q80,18 96,18 Q112,18 112,40 L112,108 Q140,98 158,110 Q174,122 163,138 Q178,148 167,163 Q180,175 165,190 L160,206 Q140,228 112,228 Q84,228 74,208 L68,184
+      Q48,174 36,156 Q26,140 40,132 Q54,126 66,140 L80,150 Z" fill="${skin}" stroke="${PAL.ink}" stroke-width="7" stroke-linejoin="round"/>
+    <path d="M116,128 Q140,122 160,134 M118,154 Q142,150 164,160 M120,180 Q142,178 162,186" fill="none" stroke="${PAL.ink}" stroke-width="4.5" stroke-linecap="round" opacity="0.65"/>
+    <path d="M112,108 L112,140" fill="none" stroke="${PAL.ink}" stroke-width="4.5" stroke-linecap="round" opacity="0.5"/>
+    <path d="M56,150 Q66,160 78,156" fill="none" stroke="${PAL.ink}" stroke-width="4" stroke-linecap="round" opacity="0.55"/>
+    <path d="M84,52 L84,96" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
+    <path d="M86,30 Q96,23 106,30" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+    <path d="M90,196 Q112,206 140,198" fill="none" stroke="${shade}" stroke-width="6" stroke-linecap="round"/>
+    <path d="M74,210 Q118,232 162,204 L168,226 Q118,256 70,234 Z" fill="${PAL.scarf}" stroke="${PAL.ink}" stroke-width="6" stroke-linejoin="round"/>
   </g>`;
   return wrap(W, H, [], body, { seed: 261, wobble: 1 });
 }

@@ -696,22 +696,25 @@ export class App {
 
   // finger overlay for capture mode (trailer): shows when the screen is held
   drawFinger(ctx, down, W, H, time) {
-    const x = W * 0.74, y = H * 0.84;
+    // lower centre, clear of the side buttons video apps put on the right
+    const x = W * 0.5, y = H * 0.875;
     const f = this.fingerFx || (this.fingerFx = { k: 0, last: false, t0: 0 });
     if (down && !f.last) f.t0 = time;
     f.last = down;
-    f.k += ((down ? 1 : 0) - f.k) * 0.45;
+    f.k += ((down ? 1 : 0) - f.k) * 0.5;
     ctx.save();
     if (down) {
-      const r = ((time - f.t0) * 1.4) % 1;
-      ctx.strokeStyle = `rgba(255,255,255,${(0.85 - r * 0.85).toFixed(2)})`;
+      const r = ((time - f.t0) * 1.5) % 1;
+      ctx.strokeStyle = `rgba(255,201,51,${(0.95 - r * 0.95).toFixed(2)})`;
       ctx.lineWidth = 5;
-      ctx.beginPath(); ctx.arc(x, y, 18 + r * 40, 0, Math.PI * 2); ctx.stroke();
-      ctx.fillStyle = 'rgba(255,255,255,0.38)';
-      ctx.beginPath(); ctx.arc(x, y, 20, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x, y, 16 + r * 34, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,201,51,0.55)';
+      ctx.strokeStyle = '#1e2350'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(x, y, 15, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
     }
-    drawSprite(ctx, f.k > 0.5 ? 'hand_down' : 'hand_up', x, y - 14 * (1 - f.k), 0.7);
+    drawSprite(ctx, f.k > 0.5 ? 'hand_down' : 'hand_up', x, y - 12 * (1 - f.k), 0.5, 0, 1, false, 1, 1 - 0.06 * f.k);
     ctx.restore();
   }
+
 
 }

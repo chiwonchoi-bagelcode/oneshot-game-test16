@@ -250,5 +250,6 @@
  "up.slide.label": "Downhill speed-up",
  "up.magnet.label": "Reach",
  "up.glide.label": "Fall speed",
- "up.scarf.label": "Escapes"
+ "up.scarf.label": "Escapes",
+ "res.moreUnlocks": "{n} more new features — see them in the village"
 }

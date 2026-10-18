@@ -12,13 +12,13 @@ fs.mkdirSync(DIR, { recursive: true });
 
 // [output name, shot, frame index in that shot]
 export const STILLS = [
-  ['01_soar', 'hook', 52],
-  ['02_rush', 'fever', 84],
-  ['03_blizzard', 'escape', 22],
-  ['04_village', 'village', 80],
-  ['05_upgrade', 'upgrade', 50],
-  ['06_rings', 'm_rings', 14],
-  ['07_sunset', 'm_sunset', 30],
+  ['01_soar', 'hook', 62],
+  ['02_rush', 'hook', 222],
+  ['03_blizzard', 'escape', 12],
+  ['04_village', 'meta', 110],
+  ['05_upgrade', 'meta', 15],
+  ['06_rings', 'm_rings', 8],
+  ['07_sunset', 'crossing', 96],
 ];
 
 const browser = await launch();

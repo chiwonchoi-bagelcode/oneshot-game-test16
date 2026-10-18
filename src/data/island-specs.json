@@ -61,7 +61,11 @@
      "type": "perfect",
      "n": 5
     }
-   ]
+   ],
+   "opening": {
+    "y": 640,
+    "w": 960
+   }
   },
   {
    "id": "island02",

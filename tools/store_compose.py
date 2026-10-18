@@ -21,7 +21,7 @@ CAPTIONS = {
         '04_village': '물고기로\n펭귄 마을을 키워요',
         '05_upgrade': '강화하면 다음 판에\n바로 더 높이',
         '06_rings': '오로라 섬에서\n빛의 고리를 통과',
-        '07_sunset': '아홉 개의 섬을\n건너 하늘 끝까지',
+        '07_sunset': '바다 건너\n새로운 섬으로',
         '08_map': '섬마다 새로운\n목표와 보상',
     },
     'en': {
@@ -31,7 +31,7 @@ CAPTIONS = {
         '04_village': 'Grow your\npenguin village',
         '05_upgrade': 'Upgrade and fly\nhigher next run',
         '06_rings': 'Fly through the\naurora rings',
-        '07_sunset': 'Cross nine islands\nto the end of the sky',
+        '07_sunset': 'Fly across the sea\nto new islands',
         '08_map': 'New goals and\nrewards on every island',
     },
 }

@@ -9,6 +9,7 @@ import { makeRng } from '../src/core/rng.js';
 import { RunSim } from '../src/core/run.js';
 import { makeBot } from '../src/core/bot.js';
 import { firstSoarFish, applySoarFish } from './fish-lines.mjs';
+import { applyOpening } from './opening.mjs';
 
 const balance = JSON.parse(fs.readFileSync(new URL('../src/data/balance.json', import.meta.url)));
 const SPECS = JSON.parse(fs.readFileSync(new URL('../src/data/island-specs.json', import.meta.url)));
@@ -179,6 +180,11 @@ for (const [idx, spec] of SPECS.islands.entries()) {
     expect: spec.expect,
     goals: spec.goals,
   };
+  // a longer first downhill where the spec asks for one (island 1: the first hold and first soar)
+  if (spec.opening) {
+    const { mapX } = applyOpening({ points: level.points }, spec.opening);
+    for (const hr of hillRanges) { hr.crest = mapX(hr.crest); hr.valley = mapX(hr.valley); hr.next = mapX(hr.next); }
+  }
   // features first (they change flights), then sample trails, then fish
   let trails = referenceTrails(level, out, spec.expect.upgrades, 2);
   placeFeatures(level, spec, hillRanges, trails, rng);

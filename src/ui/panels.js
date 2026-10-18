@@ -243,7 +243,8 @@ export class MapPopup extends Popup {
       r.btn.classList.remove('hidden');
       r.btn.innerHTML = '';
       if (lh || r.i === 0) {
-        r.btn.appendChild(h('span', { class: 'btn-label' }, s.startIsland === r.i ? t('map.start') + ' ✓' : t('map.start')));
+        r.btn.appendChild(h('span', { class: 'btn-label' }, t('map.start')));
+        if (s.startIsland === r.i) r.btn.appendChild(icon('check', 22, 'btn-ico'));
         r.btn.disabled = false; r.btn.classList.add('ready');
       } else {
         r.btn.appendChild(icon('lighthouse', 26));

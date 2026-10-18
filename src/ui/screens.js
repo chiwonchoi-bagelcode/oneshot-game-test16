@@ -128,7 +128,8 @@ export class ResultsScreen {
     this.row = h('div', { class: 'res-row' }, this.up, this.vil);
     this.actions = h('div', { class: 'res-actions' }, this.again, this.row);
     this.skip = h('div', { class: 'res-skip' });
-    this.el = h('div', { class: 'results' }, h('div', { class: 'res-scroll' }, this.card, this.actions), this.skip);
+    // the buttons are a footer outside the scrolling card, so no amount of content can push them off
+    this.el = h('div', { class: 'results' }, h('div', { class: 'res-scroll' }, this.card, this.skip), this.actions);
     this.el.addEventListener('pointerdown', (e) => { e.stopPropagation(); this.finish(); });
     this.finishers = [];
   }
@@ -177,10 +178,13 @@ export class ResultsScreen {
     this.chips.innerHTML = '';
     const chip = (ic, text) => this.chips.appendChild(h('div', { class: 'chip' }, icon(ic, 24), h('span', {}, text)));
     if (applied.hatched.length) chip('egg', t('vil.eggHatched'));
-    for (const u of applied.unlocks) {
-      const map = { upgrades: ['flap', 'unlock.upgrades'], village: ['village', 'unlock.village'], missions: ['missions', 'unlock.missions'], map: ['map', 'unlock.map'], today: ['daily', 'unlock.today'], slide: ['slide', 'unlock.slide'], magnet: ['magnet', 'unlock.magnet'], glide: ['glide', 'unlock.glide'], scarf: ['scarf', 'unlock.scarf'] };
-      if (map[u]) chip(map[u][0], t(map[u][1]));
-    }
+    const map = { upgrades: ['flap', 'unlock.upgrades'], village: ['village', 'unlock.village'], missions: ['missions', 'unlock.missions'], map: ['map', 'unlock.map'], today: ['daily', 'unlock.today'], slide: ['slide', 'unlock.slide'], magnet: ['magnet', 'unlock.magnet'], glide: ['glide', 'unlock.glide'], scarf: ['scarf', 'unlock.scarf'] };
+    const unlocks = applied.unlocks.filter((u) => map[u]);
+    // at most three on the card; the rest wait in the village (badges show where)
+    const room = applied.hatched.length ? 2 : 3;
+    const shown = unlocks.length > room ? unlocks.slice(0, room - 1) : unlocks;
+    for (const u of shown) chip(map[u][0], t(map[u][1]));
+    if (shown.length < unlocks.length) chip('star', t('res.moreUnlocks', { n: unlocks.length - shown.length }));
     // diagnosis tip
     const tip = data.tip;
     if (tip) { this.tip.innerHTML = ''; this.tip.appendChild(icon('info', 26)); this.tip.appendChild(h('span', {}, t(tip))); this.tip.classList.remove('hidden'); }

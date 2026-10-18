@@ -17,6 +17,7 @@ export class Session {
   constructor(browser, { lang = 'ko', save = null, w = 360, h = 640, dpr = 3, query = 'nodebug=1' } = {}) {
     Object.assign(this, { browser, lang, save, w, h, dpr, query });
     this.frames = []; // per recorded frame: game time at that frame
+    this.py = []; // per recorded frame: penguin screen y (0-1) during runs
   }
 
   async open() {
@@ -69,10 +70,16 @@ export class Session {
     let idx = startIndex ?? this.frames.length;
     for (let i = 0; i < n; i++) {
       const js = perFrame ? perFrame(i) : null;
+      // dt: seconds, a function of the frame index, or a JS expression evaluated in the page
+      // (with app/sim) for speed ramps that depend on game state
       const t = await this.page.evaluate(([src, d]) => {
-        if (src) new Function('app', 'sim', src)(window.__app, window.__app.run && window.__app.run.sim);
-        window.__cap.step(d, 1);
-        return window.__cap.t;
+        const app = window.__app, sim = app.run && app.run.sim;
+        if (src) new Function('app', 'sim', src)(app, sim);
+        const dd = typeof d === 'string' ? new Function('app', 'sim', 'return (' + d + ')')(app, sim) : d;
+        window.__cap.step(dd, 1);
+        // where the penguin is on screen (0 = top, 1 = bottom), so captions can keep clear of it
+        const py = app.mode === 'run' && sim ? app.run.cam.toScreenY(sim.p.y) / app.run.cam.H : null;
+        return [window.__cap.t, py];
       }, [js, typeof dt === 'function' ? dt(i) : dt]);
       if (this.stills) {
         if (this.stills.at.has(idx)) await this.page.screenshot({ path: path.join(this.stills.dir, `${this.stills.name}_${idx}.png`) });
@@ -80,7 +87,8 @@ export class Session {
         const file = path.join(dir, String(idx).padStart(5, '0') + (jpeg ? '.jpg' : '.png'));
         await this.page.screenshot(jpeg ? { path: file, type: 'jpeg', quality: 94 } : { path: file });
       }
-      this.frames.push(t);
+      this.frames.push(t[0]);
+      this.py.push(t[1] == null ? null : Math.round(t[1] * 1000) / 1000);
       idx++;
     }
   }

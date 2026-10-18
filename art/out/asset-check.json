@@ -1,8 +1,6 @@
 {
  "errors": [],
- "warnings": [
-  "wind_2: content touches render edge ['top'] (may be clipped)"
- ],
+ "warnings": [],
  "checks": {
   "p_slide_0": {
    "size": [
@@ -1831,10 +1829,10 @@
    ],
    "transparent_corners": true,
    "bbox": [
-    26,
+    21,
     14,
-    164,
-    244
+    153,
+    225
    ],
    "edge_touch": [],
    "scaled": [
@@ -1842,11 +1840,11 @@
     154
    ],
    "trim": [
-    86,
-    141
+    82,
+    130
    ],
    "pivot_px": [
-    42.5,
+    46.5,
     3.8
    ]
   },
@@ -1857,10 +1855,10 @@
    ],
    "transparent_corners": true,
    "bbox": [
-    26,
+    20,
     24,
-    164,
-    254
+    156,
+    223
    ],
    "edge_touch": [],
    "scaled": [
@@ -1868,11 +1866,11 @@
     154
    ],
    "trim": [
-    86,
-    141
+    85,
+    124
    ],
    "pivot_px": [
-    42.5,
+    47.5,
     3.8
    ]
   },
@@ -2638,7 +2636,7 @@
    "transparent_corners": true,
    "bbox": [
     32,
-    34,
+    40,
     163,
     350
    ],
@@ -2649,11 +2647,11 @@
    ],
    "trim": [
     68,
-    160
+    157
    ],
    "pivot_px": [
     33.0,
-    80.0
+    77.0
    ]
   },
   "wind_2": {
@@ -2664,24 +2662,22 @@
    "transparent_corners": true,
    "bbox": [
     32,
-    0,
+    105,
     163,
     355
    ],
-   "edge_touch": [
-    "top"
-   ],
+   "edge_touch": [],
    "scaled": [
     96,
     192
    ],
    "trim": [
     68,
-    179
+    128
    ],
    "pivot_px": [
     33.0,
-    96.0
+    45.0
    ]
   },
   "wind_3": {
@@ -2692,7 +2688,7 @@
    "transparent_corners": true,
    "bbox": [
     32,
-    74,
+    80,
     163,
     330
    ],
@@ -2703,11 +2699,11 @@
    ],
    "trim": [
     68,
-    130
+    127
    ],
    "pivot_px": [
     33.0,
-    60.0
+    57.0
    ]
   },
   "ring_back": {

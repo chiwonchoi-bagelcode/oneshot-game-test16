@@ -23,7 +23,7 @@ for (const [name, fn] of Object.entries(SHOTS)) {
   const s = await new Session(browser, { lang }).open();
   await fn(s, dir);
   const L = await s.log();
-  fs.writeFileSync(path.join(dir, 'meta.json'), JSON.stringify({ fps: FPS, frames: s.frames, log: L.log, loops: L.loops }));
+  fs.writeFileSync(path.join(dir, 'meta.json'), JSON.stringify({ fps: FPS, frames: s.frames, py: s.py, log: L.log, loops: L.loops }));
   console.log(name.padEnd(10), s.frames.length, 'frames', ((Date.now() - t) / 1000).toFixed(0) + 's', s.errors.length ? s.errors : '');
   await s.close();
 }

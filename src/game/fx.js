@@ -110,7 +110,10 @@ export class Floaters {
         // keep labels that ride with the penguin fully on screen (below the HUD)
         const half = ctx.measureText(it.text).width / 2 + size * 0.3;
         x = Math.max(half, Math.min(cam.W - half, x));
-        y = Math.max(cam.H * 0.14 + size, y);
+        // near the top (under the HUD) the label goes below the penguin instead of over the HUD
+        const top = cam.H * 0.17 + size * 0.6;
+        if (y < top) it.below = true; // once moved below it stays there (no jumping back and forth)
+        if (it.below) y = cam.toScreenY(it.follow.y) + it.oy * 0.9 + it.rise * Math.sqrt(k);
         for (let guard = 0; guard < 4; guard++) {
           const hit = placed.find((r) => Math.abs(r.y - y) < (r.s + size) * 0.55 && Math.abs(r.x - x) < r.h + half);
           if (!hit) break;

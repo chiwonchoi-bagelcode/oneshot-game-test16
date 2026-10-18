@@ -271,7 +271,8 @@ export class RunSim {
     p.y = gy;
     const airT = p.air;
     let kind;
-    if (!p.announced || (airT < 0.28 && p.flightMax < 70)) {
+    // skims over a crest are not flights: no rating, no Snow Rush progress (and nothing lost)
+    if (!p.announced || airT < P.ratedMinAir || p.flightMax < P.ratedMinHeight) {
       kind = 'touch';
       p.s = Math.max(along, P.minSpeed);
     } else if (alpha < P.perfectAngle * (cloud ? 1.4 : 1) && d < -P.perfectMinDownSlope) {
@@ -316,7 +317,9 @@ export class RunSim {
     const fish = isl.fish;
     const pickR = this.P.radius + 30;
     const magR = this.up.magnet;
-    const reach = Math.max(pickR, magR) + 40;
+    // fish on an island's first big flight swim toward you a little even without the magnet
+    const soarR = this.P.soarFishPull;
+    const reach = Math.max(pickR, magR, soarR) + 40;
     while (this.fishIndex < fish.length && fish[this.fishIndex].x < p.x - reach - 200) this.fishIndex++;
     for (let i = this.fishIndex; i < fish.length; i++) {
       const f = fish[i];
@@ -325,7 +328,7 @@ export class RunSim {
       const dx = f.x - p.x, dy = f.y - p.y;
       const d2 = dx * dx + dy * dy;
       if (d2 < pickR * pickR) this._take(f);
-      else if (magR > 0 && d2 < magR * magR && !f.pull) { f.pull = 1; this.pulling.push(f); }
+      else if (!f.pull && ((magR > 0 && d2 < magR * magR) || (f.soar && d2 < soarR * soarR))) { f.pull = 1; this.pulling.push(f); }
     }
     // magnet pulled fish fly toward the penguin
     if (this.pulling.length) {

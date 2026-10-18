@@ -316,11 +316,24 @@ export class WorldRenderer {
       const yb = cam.toScreenY(gy), yt = cam.toScreenY(gy + w.h);
       // soft column so the updraft reads at a glance
       const g = ctx.createLinearGradient(x0, 0, x1, 0);
-      g.addColorStop(0, 'rgba(255,255,255,0)');
-      g.addColorStop(0.5, 'rgba(235,245,255,0.32)');
-      g.addColorStop(1, 'rgba(255,255,255,0)');
+      g.addColorStop(0, 'rgba(190,240,255,0)');
+      g.addColorStop(0.5, 'rgba(190,240,255,0.5)');
+      g.addColorStop(1, 'rgba(190,240,255,0)');
       ctx.fillStyle = g;
       ctx.fillRect(x0, yt, x1 - x0, yb - yt);
+      // upward streaks: the column visibly blows up, on any sky
+      ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+      ctx.lineCap = 'round';
+      ctx.lineWidth = Math.max(2, 5 * z);
+      for (let k = 0; k < 9; k++) {
+        const ph = (this.time * 1.3 + k * 0.37) % 1;
+        const sx2 = x0 + (x1 - x0) * (0.18 + 0.64 * ((k * 0.618) % 1));
+        const y = yb - ph * (yb - yt);
+        const len = (60 + 40 * ((k * 0.37) % 1)) * z * 2;
+        ctx.globalAlpha = Math.sin(ph * Math.PI) * 0.85;
+        ctx.beginPath(); ctx.moveTo(sx2, y); ctx.lineTo(sx2, y - len); ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
       // rising swirls
       const cx = (x0 + x1) / 2, span = yb - yt;
       ctx.strokeStyle = 'rgba(255,255,255,0.85)';
@@ -337,8 +350,8 @@ export class WorldRenderer {
       }
       ctx.globalAlpha = 1;
       const fr = Math.floor(this.time * 8) % 4;
-      draw(ctx, 'wind_' + fr, cx, yb - span * 0.25, z * 2.4, 0, 0.8);
-      draw(ctx, 'wind_' + ((fr + 2) % 4), cx, yb - span * 0.6, z * 2.4, 0, 0.6);
+      draw(ctx, 'wind_' + fr, cx, yb - span * 0.25, z * 2.4, 0, 1);
+      draw(ctx, 'wind_' + ((fr + 2) % 4), cx, yb - span * 0.6, z * 2.4, 0, 0.85);
     }
   }
 
