@@ -31,8 +31,13 @@ function writeLevelIndex() {
   if (!fs.existsSync(target) || fs.readFileSync(target, 'utf8') !== text) fs.writeFileSync(target, text);
 }
 
+import { execSync } from 'node:child_process';
+
 async function buildAll() {
   writeLevelIndex();
+  // fonts (subset to used glyphs) + atlas metadata into the bundle
+  execSync('python3 tools/build_fonts.py', { cwd: root, stdio: 'inherit' });
+  if (fs.existsSync(path.join(out, 'assets/atlas.json'))) fs.copyFileSync(path.join(out, 'assets/atlas.json'), path.join(root, 'src/data/atlas.json'));
   const common = {
     entryPoints: [path.join(root, 'src/main.js')],
     bundle: true,
@@ -72,8 +77,8 @@ async function buildAll() {
   fs.writeFileSync(path.join(out, 'index.html'), html.replace(/__STAMP__/g, stamp).replace(/__BASE__/g, ''));
   fs.mkdirSync(path.join(out, 'dev'), { recursive: true });
   fs.writeFileSync(path.join(out, 'dev/index.html'), html.replace(/__STAMP__/g, stamp).replace(/__BASE__/g, '../'));
-  // css
-  fs.copyFileSync(path.join(root, 'src/style.css'), path.join(out, 'style.css'));
+  // css = embedded fonts + game styles
+  fs.writeFileSync(path.join(out, 'style.css'), fs.readFileSync(path.join(root, 'src/fonts.css'), 'utf8') + '\n' + fs.readFileSync(path.join(root, 'src/style.css'), 'utf8'));
   // level json copies for the editor (import/export reference)
   copyDir(path.join(root, 'src/data/levels'), path.join(out, 'data/levels'));
   console.log('built', new Date().toLocaleTimeString());

@@ -1,0 +1,31 @@
+{
+  "_comment": "Daily systems. streak = 7 day cycle of fish gifts (loops). missions pool: target scales with the player's best island (tier). today = Island of the Day settings.",
+  "streak": [30, 50, 80, 120, 160, 220, 400],
+  "missions": {
+    "perDay": 3,
+    "unlockRuns": 3,
+    "allDoneBonus": 60,
+    "pool": [
+      { "type": "fish", "base": 60, "perTier": 40, "reward": 40 },
+      { "type": "perfect", "base": 6, "perTier": 3, "reward": 40 },
+      { "type": "height", "base": 50, "perTier": 30, "reward": 45, "single": true },
+      { "type": "runs", "base": 4, "perTier": 1, "reward": 35 },
+      { "type": "fever", "base": 1, "perTier": 1, "reward": 50 },
+      { "type": "distance", "base": 1200, "perTier": 900, "reward": 50, "single": true },
+      { "type": "gold", "base": 2, "perTier": 1, "reward": 45 },
+      { "type": "build", "base": 1, "perTier": 0, "reward": 30 },
+      { "type": "upgrade", "base": 1, "perTier": 0, "reward": 30 }
+    ]
+  },
+  "today": {
+    "unlockIsland": 3,
+    "unlockDay": 2,
+    "rewardBase": 120,
+    "rewardPerTier": 60,
+    "mods": ["ice", "wind", "gold", "big", "choppy"]
+  },
+  "rack": { "capHours": 12 },
+  "assist": { "afterFails": 3, "step": 0.04, "max": 0.12 },
+  "hotspringMul": 2,
+  "festivalMul": 1.5
+}

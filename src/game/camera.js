@@ -27,7 +27,7 @@ export class Camera {
     const world = sim.world;
     const speed = p.ground ? p.s : Math.hypot(p.vx, p.vy);
     const sn = Math.min(1, Math.max(0, (speed - 500) / 1700));
-    const viewW = 1180 + 520 * sn;
+    const viewW = 1050 + 560 * sn;
     let zt = this.baseZoom(viewW);
     // look-ahead/behind: at height shift the penguin toward center to reveal the trail behind
     const ground = world.heightAt(p.x);

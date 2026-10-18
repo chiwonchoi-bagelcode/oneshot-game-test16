@@ -60,6 +60,12 @@ export class RunSim {
       hills: 0,
     };
     this._wasDanger = false;
+    this.islandStats = {};
+    this.istat = this._istat(this.island.index);
+  }
+
+  _istat(i) {
+    return this.islandStats[i] || (this.islandStats[i] = { fishValue: 0, gold: 0, perfect: 0, fevers: 0, rings: 0, maxHeight: 0 });
   }
 
   get distanceUnits() { return this.p.x; }
@@ -211,6 +217,7 @@ export class RunSim {
     if (h > p.flightMax) {
       p.flightMax = h;
       if (h > this.stats.maxHeight) this.stats.maxHeight = h;
+      if (!this.ghost && h > this.istat.maxHeight) this.istat.maxHeight = h;
       const ms = P.heightMilestones;
       const upm = this.balance.display.unitsPerMeter;
       while (p.milestone < ms.length && h >= ms[p.milestone] * upm) {
@@ -228,6 +235,7 @@ export class RunSim {
         if (this.ghost) this._ghostRings.add(r); else r.used = true;
         p.vx *= P.ringBoost; p.vy = Math.max(p.vy, 0) * P.ringBoost + 200;
         this.stats.rings++;
+        if (!this.ghost) this.istat.rings++;
         this.emit('ring', { x: r.x, y: r.y });
       }
     }
@@ -256,6 +264,7 @@ export class RunSim {
       p.s = along * P.perfectBoost;
       p.chain++;
       this.stats.perfect++;
+      if (!this.ghost) this.istat.perfect++;
     } else if (alpha > P.bonkAngle && !cloud && p.fever <= 0) {
       kind = 'bonk';
       p.s = along * P.bonkKeep;
@@ -278,6 +287,7 @@ export class RunSim {
       if (kind === 'perfect' && p.chain >= P.feverChain && p.fever <= 0) {
         p.fever = P.feverTime;
         this.stats.fevers++;
+        if (!this.ghost) this.istat.fevers++;
         this.blizzardX = Math.max(this.blizzardX - P.feverBlizzardPush, p.x - this.balance.blizzard.maxGap);
         this.emit('fever');
       } else if (kind === 'perfect' && p.fever > 0) {
@@ -322,7 +332,8 @@ export class RunSim {
     const mul = this.p.fever > 0 ? 2 : 1;
     const v = (f.gold ? E.goldFishValue : E.fishValue) * mul;
     this.stats.fishValue += v;
-    if (f.gold) this.stats.gold++; else this.stats.fish++;
+    this.istat.fishValue += v;
+    if (f.gold) { this.stats.gold++; this.istat.gold++; } else this.stats.fish++;
     this.emit('fish', { gold: f.gold, value: v, x: f.x, y: f.y });
   }
 
@@ -412,6 +423,7 @@ export class RunSim {
     if (u >= 1) {
       const next = c.next;
       this.island = next;
+      this.istat = this._istat(next.index);
       this.islandTime = 0;
       this.fishIndex = 0;
       next.sample(p.x, tmp);

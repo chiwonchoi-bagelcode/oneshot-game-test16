@@ -49,8 +49,9 @@
    "highLift": 560,
    "decor": [
     "rock",
-    "snowman",
-    "crystal"
+    "crystal",
+    "rock",
+    "pine"
    ],
    "goals": [
     {

@@ -1,0 +1,174 @@
+{
+ "dawn": {
+  "sky": [
+   "#6ec3f2",
+   "#b9e4fb",
+   "#ffe0cf"
+  ],
+  "haze": "#ffe8de",
+  "night": false,
+  "terrain": [
+   "#ffffff",
+   "#dce9fb",
+   "#a9c2ec"
+  ],
+  "rim": "#f6c9d8",
+  "sea": [
+   "#7fc1ee",
+   "#3f7fd0"
+  ]
+ },
+ "pine": {
+  "sky": [
+   "#47acf0",
+   "#9fd8fa",
+   "#e6f6ff"
+  ],
+  "haze": "#e4f4ff",
+  "night": false,
+  "terrain": [
+   "#ffffff",
+   "#d8e8fb",
+   "#a2bde8"
+  ],
+  "rim": "#ffffff",
+  "sea": [
+   "#5fb0ee",
+   "#2f6fc0"
+  ]
+ },
+ "lake": {
+  "sky": [
+   "#5fcbe6",
+   "#bdeef4",
+   "#f6ffff"
+  ],
+  "haze": "#efffff",
+  "night": false,
+  "terrain": [
+   "#f6feff",
+   "#cdeff7",
+   "#8ccbe6"
+  ],
+  "rim": "#e0fbff",
+  "sea": [
+   "#7fd8ea",
+   "#3a9fd0"
+  ]
+ },
+ "wind": {
+  "sky": [
+   "#8792de",
+   "#c5c3ef",
+   "#f3e6f5"
+  ],
+  "haze": "#efe6f7",
+  "night": false,
+  "terrain": [
+   "#ffffff",
+   "#e2defa",
+   "#b1a9e4"
+  ],
+  "rim": "#f1e9ff",
+  "sea": [
+   "#8f9ae0",
+   "#4f5aa8"
+  ]
+ },
+ "sunset": {
+  "sky": [
+   "#6a58c2",
+   "#f08aa8",
+   "#ffc46b"
+  ],
+  "haze": "#ffcf9e",
+  "night": false,
+  "terrain": [
+   "#fff6f2",
+   "#fbd9de",
+   "#e0a2be"
+  ],
+  "rim": "#ffe0d0",
+  "sea": [
+   "#c97fb8",
+   "#6a4a9a"
+  ]
+ },
+ "geyser": {
+  "sky": [
+   "#56bfc0",
+   "#aee9df",
+   "#fff1df"
+  ],
+  "haze": "#fff3e6",
+  "night": false,
+  "terrain": [
+   "#fffdf8",
+   "#e2f1ee",
+   "#a8cdc6"
+  ],
+  "rim": "#ffffff",
+  "sea": [
+   "#6fc8c8",
+   "#2f8a9a"
+  ]
+ },
+ "aurora": {
+  "sky": [
+   "#121848",
+   "#28307a",
+   "#4b3f8f"
+  ],
+  "haze": "#5a4a9a",
+  "night": true,
+  "terrain": [
+   "#e8f2ff",
+   "#a9bde8",
+   "#5f6fb8"
+  ],
+  "rim": "#bff5e8",
+  "sea": [
+   "#2a3f8a",
+   "#141e50"
+  ]
+ },
+ "cloud": {
+  "sky": [
+   "#56b5f5",
+   "#a5dbfb",
+   "#fff2df"
+  ],
+  "haze": "#fff6ea",
+  "night": false,
+  "terrain": [
+   "#ffffff",
+   "#fbefff",
+   "#e2c9f0"
+  ],
+  "rim": "#fff1fb",
+  "sea": [
+   "#bfe4ff",
+   "#8fbff0"
+  ],
+  "surface": "cloud"
+ },
+ "stars": {
+  "sky": [
+   "#0c1136",
+   "#2a1f5e",
+   "#6b3f8f"
+  ],
+  "haze": "#7a4f9a",
+  "night": true,
+  "terrain": [
+   "#f2ecff",
+   "#bfb3ee",
+   "#7a6cc4"
+  ],
+  "rim": "#e6dcff",
+  "sea": [
+   "#3a2f7a",
+   "#140f3a"
+  ]
+ }
+}

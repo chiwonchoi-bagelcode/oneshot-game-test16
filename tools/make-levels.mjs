@@ -150,11 +150,13 @@ function placeFeatures(level, spec, hillRanges, trails, rng) {
 function placeDecor(level, spec, rng) {
   const decor = [];
   const len = level.points[level.points.length - 1][0];
-  decor.push({ type: 'sign', x: 200 });
+  decor.push({ type: 'sign', x: 340 });
   const kinds = spec.decor || ['rock'];
-  for (let x = 500; x < len - 600; x += rng.range(260, 620)) {
-    decor.push({ type: rng.pick(kinds), x: Math.round(x), s: +rng.range(0.8, 1.2).toFixed(2), v: rng.int(0, 2) });
+  for (let x = 700; x < len - 600; x += rng.range(380, 760)) {
+    decor.push({ type: rng.pick(kinds), x: Math.round(x), s: +rng.range(0.75, 1.1).toFixed(2), v: rng.int(0, 2) });
   }
+  // one snowman per island, somewhere in the middle, as a little landmark
+  decor.push({ type: 'snowman', x: Math.round(len * 0.45), s: 0.9, v: 0 });
   decor.push({ type: 'flag', x: len - 40 });
   return decor;
 }
