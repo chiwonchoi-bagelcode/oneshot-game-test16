@@ -253,7 +253,8 @@ export class RunScene {
   // ---------------------------------------------------------------- events -> feel
   word(text, o = {}) {
     const p = this.sim.p;
-    this.floaters.add(text, { x: p.x + 30, y: p.y + 210, size: o.size || 26, color: o.color || '#ffffff', life: o.life || 1.0, kind: 'word' });
+    // words ride along above the penguin (one at a time) so they never slide off-screen at speed
+    this.floaters.add(text, { follow: p, ox: 18, oy: 112, rise: 26, size: o.size || 26, color: o.color || '#ffffff', life: o.life || 1.0, kind: 'word' });
   }
 
   confetti(n) {
@@ -288,7 +289,7 @@ export class RunScene {
       }
       case 'height': {
         const m = e.meters;
-        this.floaters.add(t('fx.height', { m }), { x: p.x, y: p.y + 170, size: 22 + e.level * 2, color: '#bff0ff', life: 1.1, kind: 'word' });
+        this.floaters.add(t('fx.height', { m }), { follow: p, oy: 62, rise: 14, size: 22 + e.level * 2, color: '#bff0ff', life: 1.2, kind: 'height' });
         au.play('height', { rate: step(e.level) });
         if (e.level >= 2) hp.pulse('light');
         break;
@@ -360,7 +361,7 @@ export class RunScene {
         break;
       }
       case 'escape': {
-        this.floaters.add(t('fx.escape'), { x: p.x, y: p.y + 200, size: 22, color: '#ffffff', life: 1, kind: 'word' });
+        this.word(t('fx.escape'), { size: 22, life: 1 });
         au.play('escape');
         break;
       }
@@ -462,7 +463,7 @@ export class RunScene {
     }
     if (this.flash > 0) { ctx.fillStyle = `rgba(255,255,255,${(0.5 * this.flash).toFixed(3)})`; ctx.fillRect(0, 0, W, H); }
     if (this.hint) this.drawHint(ctx, W, H);
-    if (this.capture && this.app.drawFinger) this.app.drawFinger(ctx, this.pressing, W, H, this.time);
+    if (this.capture && this.app.drawFinger && !this.ended && this.app.mode === 'run') this.app.drawFinger(ctx, this.pressing, W, H, this.time);
   }
 
   drawGhost(ctx) {

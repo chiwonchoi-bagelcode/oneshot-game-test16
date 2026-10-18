@@ -7,7 +7,7 @@ import balance from '../data/balance.json';
 import dailyData from '../data/daily.json';
 import {
   UPGRADE_KEYS, upgradeCost, upgradeUnlocked, upgradeUnlockText, upgradeDisplay, availableBuildings, buildingKey, BUILDINGS,
-  isBuilt, BUILDING, rackAmount, rackRate, population, villagePct, goalReward,
+  isBuilt, canBuild, BUILDING, rackAmount, rackRate, population, villagePct, goalReward,
 } from '../meta/economy.js';
 import { streakRewards, streakClaimable, todayInfo } from '../meta/daily.js';
 import { goalText } from './screens.js';
@@ -113,7 +113,12 @@ export class BuildPopup extends Popup {
       const k = buildingKey(b);
       r.name = h('div', { class: 'card-name' });
       r.desc = h('div', { class: 'card-desc' });
-      r.btn = button('', { cls: 'btn-buy', onTap: () => { if (app.build(b.id)) this.refresh(); } });
+      // building closes the list so the new building is seen popping up in the village
+      r.btn = button('', { cls: 'btn-buy', onTap: () => {
+        if (!canBuild(app.state, b.id)) return;
+        this.forceClose = true; app.ui.close(this.id); this.forceClose = false;
+        app.build(b.id, 0.25);
+      } });
       r.done = h('div', { class: 'built-mark hidden' }, icon('check', 30));
       r.el = h('div', { class: 'card build-card' }, h('div', { class: 'card-left' }, buildingThumb(b)), h('div', { class: 'card-mid' }, r.name, r.desc), h('div', { class: 'card-right' }, r.btn, r.done));
       r.k = k;

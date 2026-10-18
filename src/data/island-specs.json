@@ -683,7 +683,7 @@
     "ring": 0.4
    },
    "blizzard": {
-    "speed": 1740,
+    "speed": 1680,
     "accel": 10
    },
    "expect": {

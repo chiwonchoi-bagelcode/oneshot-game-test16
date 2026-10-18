@@ -9,7 +9,7 @@ export const SEA_LEVEL = -520;
 
 function expandFish(level, island, ox) {
   const out = [];
-  const add = (x, y, gold = false) => out.push({ x: ox + x, y, gold, taken: false, pull: 0 });
+  const add = (x, y, gold = false, soar = false) => out.push({ x: ox + x, y, gold, soar, taken: false, pull: 0 });
   for (const f of level.fish || []) {
     const n = Math.max(1, f.n | 0);
     if (f.type === 'arc') {
@@ -31,7 +31,7 @@ function expandFish(level, island, ox) {
         add(lx, island.localHeight(lx) + (f.off || 46), false);
       }
     } else {
-      add(f.x, f.y, !!f.gold);
+      add(f.x, f.y, !!f.gold, !!f.soar);
     }
   }
   return out;

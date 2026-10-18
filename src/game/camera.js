@@ -43,13 +43,14 @@ export class Camera {
       const y = world.heightAt(x0 + (x1 - x0) * i / 12);
       if (y < low) low = y;
     }
-    if (crossing) low = Math.min(low, sim.crossing.y1 - 200);
+    // sea crossing: keep the penguin readable; the next island comes into view ahead of it
+    if (crossing) low = Math.max(Math.min(low, sim.crossing.y1 - 200), p.y - 1250);
     low = Math.max(low, -700);
     const topMargin = this.H * 0.2, bottom = this.H * 0.8;
     const need = (p.y - low) + 60;
     const zFit = (bottom - topMargin) / Math.max(need, 1);
     if (zFit < zt) zt = zFit;
-    if (crossing) zt = Math.min(zt, this.baseZoom(2600));
+    if (crossing) zt = Math.min(zt, this.baseZoom(1750));
     zt = Math.max(zt, this.baseZoom(5200));
     if (snap) {
       this.z = zt; this.anchor = anchorT; this.lowY = low;

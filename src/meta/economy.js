@@ -83,9 +83,14 @@ export function buildingKey(b) {
   return { name: `b.${type}.name`, desc: `b.${type}.desc`, vars };
 }
 
+export function canBuild(state, id) {
+  const b = BUILDING[id];
+  return !!b && !isBuilt(state, id) && !(b.after && !isBuilt(state, b.after)) && state.fish >= b.cost;
+}
+
 export function build(state, id) {
   const b = BUILDING[id];
-  if (!b || isBuilt(state, id) || (b.after && !isBuilt(state, b.after)) || state.fish < b.cost) return null;
+  if (!canBuild(state, id)) return null;
   state.fish -= b.cost;
   state.spent += b.cost;
   state.village.built[id] = now(state);

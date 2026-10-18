@@ -43,7 +43,7 @@ export class UI {
   open(popup) {
     if (this.busy || this.isOpen(popup.id)) return false;
     this.busy = true;
-    setTimeout(() => { this.busy = false; }, 260);
+    this.app.later(() => { this.busy = false; }, 260);
     this.stack.forEach((p) => p.el.classList.add('behind'));
     this.stack.push(popup);
     this.layer.classList.remove('hidden');
@@ -51,7 +51,8 @@ export class UI {
     popup.onOpen?.();
     popup.el.classList.remove('closing');
     popup.el.classList.add('opening');
-    requestAnimationFrame(() => requestAnimationFrame(() => popup.el.classList.remove('opening')));
+    void getComputedStyle(popup.el.querySelector('.pop-box') || popup.el).transform; // start the transition from the 'opening' pose
+    popup.el.classList.remove('opening');
     this.app.audio.play('ui_open', { volume: 0.6 });
     return true;
   }
@@ -61,14 +62,14 @@ export class UI {
     if (!top || (id && top.id !== id)) return;
     if (this.busy && !top.forceClose) return;
     this.busy = true;
-    setTimeout(() => { this.busy = false; }, 200);
+    this.app.later(() => { this.busy = false; }, 200);
     this.stack.pop();
     top.el.classList.add('closing');
     this.app.audio.play('ui_close', { volume: 0.5 });
-    setTimeout(() => { if (top.el.parentNode) top.el.parentNode.removeChild(top.el); top.el.classList.remove('closing'); }, 180);
+    this.app.later(() => { if (top.el.parentNode && !this.stack.includes(top)) top.el.parentNode.removeChild(top.el); top.el.classList.remove('closing'); }, 180);
     top.onClose?.();
     const next = this.stack[this.stack.length - 1];
-    if (next) next.el.classList.remove('behind'); else this.layer.classList.add('hidden');
+    if (next) next.el.classList.remove('behind'); else { this.layer.classList.add('hidden'); if (this.toastEl) this.toastEl.classList.remove('low'); }
     this.screens[this.current]?.refresh?.();
   }
 

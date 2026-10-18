@@ -2,7 +2,7 @@
 import balance from './data/balance.json';
 import atlasData from './data/atlas.json';
 import { LEVELS } from './data/levels.js';
-import { loadAtlas, preloadBg } from './game/assets.js';
+import { loadAtlas, preloadBg, draw as drawSprite } from './game/assets.js';
 import { RunScene } from './game/run-scene.js';
 import { VillageScene } from './game/village-scene.js';
 import { Haptics } from './game/haptics.js';
@@ -242,7 +242,31 @@ export class App {
     const app = this;
     window.__cap = {
       log: [],
+      loops: [],
       t: 0,
+      E, D,
+      // tap indicator for UI presses in trailer footage (ring + hand sprite, fingertip at x,y)
+      tapFx(x, y) {
+        if (!document.getElementById('capStyle')) {
+          const st = document.createElement('style'); st.id = 'capStyle';
+          st.textContent = '.cap-tap{position:absolute;z-index:300;pointer-events:none;left:0;top:0}.cap-ring{position:absolute;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;border:5px solid #fff;background:rgba(255,255,255,.35);animation:capRing .5s ease-out forwards}@keyframes capRing{from{transform:scale(.35);opacity:1}to{transform:scale(1.3);opacity:0}}.cap-hand{position:absolute;animation:capHand .6s ease-out forwards}@keyframes capHand{0%{transform:translateY(-12px)}30%{transform:none}80%{opacity:1}100%{opacity:0}}';
+          document.head.appendChild(st);
+        }
+        const fr = atlasData.frames.hand_down, pg = atlasData.pages[fr.p], k = 0.58;
+        const url = (window.ASSET_BASE || '') + 'assets/' + pg.file + '.png';
+        const d = document.createElement('div');
+        d.className = 'cap-tap';
+        d.style.cssText = `left:${x}px;top:${y}px`;
+        d.innerHTML = `<span class="cap-ring"></span><span class="cap-hand" style="left:${-fr.px * k}px;top:${-fr.py * k}px;width:${fr.w * k}px;height:${fr.h * k}px;background:url(${url}) ${-fr.x * k}px ${-fr.y * k}px/${pg.w * k}px ${pg.h * k}px"></span>`;
+        document.getElementById('app').appendChild(d);
+        app.later(() => d.remove(), 650);
+      },
+      bot(profile = 'expert', seed = 3) { app.run.bot = profile ? makeBot(profile, seed) : null; },
+      // ground decisions from one player profile, air decisions (dive timing) from another
+      bot2(ground, air, seed = 3) {
+        const g = makeBot(ground, seed), a = makeBot(air, seed);
+        app.run.bot = (sim) => { const pg = g(sim), pa = a(sim); return sim.p.ground ? pg : pa; };
+      },
       start() {
         app.capturing = true;
         window.__now = () => window.__cap.t * 1000;
@@ -251,6 +275,12 @@ export class App {
         app.audio.play = (name, o = {}) => { window.__cap.log.push({ t: window.__cap.t, name, rate: o.rate || 1, volume: o.volume ?? 1 }); orig(name, o); };
         const om = app.audio.playMusic.bind(app.audio);
         app.audio.playMusic = (name, force) => { window.__cap.log.push({ t: window.__cap.t, music: name }); om(name, force); };
+        for (const k of ['setSlide', 'setWind']) {
+          const o = app.audio[k].bind(app.audio);
+          app.audio[k] = (...a) => { const L = window.__cap.loops; const last = L[L.length - 1]; const row = last && last.t === window.__cap.t ? last : { t: window.__cap.t }; if (row !== last) L.push(row); row[k] = a; o(...a); };
+        }
+        const od = app.audio.duckMusic.bind(app.audio);
+        app.audio.duckMusic = (amount, time) => { window.__cap.log.push({ t: window.__cap.t, duck: amount, dur: time ?? 0.8 }); od(amount, time); };
         const os = app.audio.setFever.bind(app.audio);
         app.audio.setFever = (on) => { window.__cap.log.push({ t: window.__cap.t, fever: on }); os(on); };
       },
@@ -344,12 +374,12 @@ export class App {
     this.audio.playMusic('theme');
     this.village.sync(this.state);
     this.ui.show('hub');
-    if (this.pendingHatch) { this.pendingHatch = false; setTimeout(() => { this.audio.play('hatch'); this.ui.toast(t('vil.eggHatched'), 'egg'); }, 700); }
+    if (this.pendingHatch) { this.pendingHatch = false; this.later(() => { this.audio.play('hatch'); this.ui.toast(t('vil.eggHatched'), 'egg'); }, 700); }
     requestAnimationFrame(() => this.layoutVillage());
     this.ui.screens.hub.refresh();
     if (!this.autoPopupDone) {
       this.autoPopupDone = true;
-      setTimeout(() => this.autoPopups(boot), 500);
+      this.later(() => this.autoPopups(boot), 500);
     }
   }
 
@@ -556,7 +586,7 @@ export class App {
     return r;
   }
 
-  build(id) {
+  build(id, delay = 0) {
     const r = E.build(this.state, id);
     if (!r) return null;
     this.audio.play('build');
@@ -569,9 +599,9 @@ export class App {
     for (const u of unlocks) this.analytics.track('feature_unlock', { feature: u });
     this.save.write();
     this.village.sync(this.state);
-    this.village.celebrate(id);
+    this.village.celebrate(id, delay);
     this.ui.screens[this.ui.current]?.refresh?.();
-    if (unlocks.includes('map')) setTimeout(() => this.showInfo('unlock.title', t('unlock.map'), 'lighthouse'), 400);
+    if (unlocks.includes('map')) this.later(() => this.showInfo('unlock.title', t('unlock.map'), 'lighthouse'), 400);
     return r;
   }
 
@@ -658,7 +688,7 @@ export class App {
       const grown = s.village.babies.filter((b) => E.babyStage(s, b) !== 'baby').length - grownBefore;
       this.welcome = { rack: E.rackAmount(s), grown: Math.max(0, grown) };
       this.autoPopupDone = false;
-      if (!boot && this.mode === 'hub') setTimeout(() => this.autoPopups(false), 300);
+      if (!boot && this.mode === 'hub') this.later(() => this.autoPopups(false), 300);
     }
     for (const u of unlocks) this.analytics.track('feature_unlock', { feature: u });
     this.save.write();
@@ -666,20 +696,22 @@ export class App {
 
   // finger overlay for capture mode (trailer): shows when the screen is held
   drawFinger(ctx, down, W, H, time) {
-    const x = W * 0.72, y = H * 0.83;
+    const x = W * 0.74, y = H * 0.84;
+    const f = this.fingerFx || (this.fingerFx = { k: 0, last: false, t0: 0 });
+    if (down && !f.last) f.t0 = time;
+    f.last = down;
+    f.k += ((down ? 1 : 0) - f.k) * 0.45;
     ctx.save();
-    ctx.globalAlpha = 0.95;
     if (down) {
-      ctx.fillStyle = 'rgba(255,255,255,0.35)';
-      ctx.beginPath(); ctx.arc(x, y, 34, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 4;
-      ctx.beginPath(); ctx.arc(x, y, 34 + (time * 60 % 20), 0, Math.PI * 2); ctx.stroke();
+      const r = ((time - f.t0) * 1.4) % 1;
+      ctx.strokeStyle = `rgba(255,255,255,${(0.85 - r * 0.85).toFixed(2)})`;
+      ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.arc(x, y, 18 + r * 40, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,0.38)';
+      ctx.beginPath(); ctx.arc(x, y, 20, 0, Math.PI * 2); ctx.fill();
     }
-    ctx.translate(x + 6, y + (down ? 6 : -18));
-    ctx.rotate(-0.35);
-    ctx.fillStyle = '#ffe6d5'; ctx.strokeStyle = '#1e2350'; ctx.lineWidth = 4;
-    ctx.beginPath(); ctx.ellipse(0, 0, 16, 26, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(-16, 10); ctx.quadraticCurveTo(-24, 70, 0, 90); ctx.quadraticCurveTo(34, 80, 24, 10); ctx.closePath(); ctx.fill(); ctx.stroke();
+    drawSprite(ctx, f.k > 0.5 ? 'hand_down' : 'hand_up', x, y - 14 * (1 - f.k), 0.7);
     ctx.restore();
   }
+
 }

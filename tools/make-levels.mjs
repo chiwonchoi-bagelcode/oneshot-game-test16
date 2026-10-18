@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import { makeRng } from '../src/core/rng.js';
 import { RunSim } from '../src/core/run.js';
 import { makeBot } from '../src/core/bot.js';
+import { firstSoarFish, applySoarFish } from './fish-lines.mjs';
 
 const balance = JSON.parse(fs.readFileSync(new URL('../src/data/balance.json', import.meta.url)));
 const SPECS = JSON.parse(fs.readFileSync(new URL('../src/data/island-specs.json', import.meta.url)));
@@ -187,6 +188,8 @@ for (const [idx, spec] of SPECS.islands.entries()) {
   for (const k of ['flap', 'slide', 'glide']) stronger[k] = ((spec.expect.upgrades || {})[k] || 0) + 2;
   const strongTrails = referenceTrails(level, out, stronger, 1);
   level.fish = placeFish(level, spec, trails, hillRanges, rng, strongTrails[0]);
+  // the first big flight of the island always flies through fish
+  applySoarFish(level, firstSoarFish(level, out, balance, spec.expect.upgrades || {}));
   level.decor = placeDecor(level, spec, rng);
   out.push(level);
   const file = `island${String(idx + 1).padStart(2, '0')}.json`;

@@ -133,8 +133,8 @@ export class VillageScene {
     if (this.buildAnim) { this.buildAnim.t += dt; if (this.buildAnim.t > 1.4) this.buildAnim = null; }
   }
 
-  celebrate(id) {
-    this.buildAnim = { id, t: 0 };
+  celebrate(id, delay = 0) {
+    this.buildAnim = { id, t: -delay };
     this.highlight = id; this.highlightT = 2;
   }
 
@@ -259,7 +259,8 @@ export class VillageScene {
     let k = 1;
     if (this.buildAnim && this.buildAnim.id === b.id) {
       const t = this.buildAnim.t;
-      k = t < 0.4 ? t / 0.4 * 1.15 : 1 + 0.15 * Math.max(0, 1 - (t - 0.4) / 0.4);
+      if (t < 0) { this.addHit(b.id, x, y, 1, 1); return; } // waits for the build list to close
+      k = t < 0.4 ? Math.max(0.05, t / 0.4 * 1.15) : 1 + 0.15 * Math.max(0, 1 - (t - 0.4) / 0.4);
       if (t < 0.6 && Math.random() < 0.5) this.puffs.push({ x: b.plot[0] + (Math.random() - 0.5) * 200 * depthAt(b.plot[1]), y: b.plot[1] - 20, t: 1.5, k: depthAt(b.plot[1]) });
     }
     if (b.type === 'kite') {
