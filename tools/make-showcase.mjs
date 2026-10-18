@@ -51,16 +51,26 @@ function md(src) {
       continue;
     }
     if (/^---+\s*$/.test(l)) { out.push('<hr>'); i++; continue; }
+    if (/^>\s?/.test(l)) {
+      const q = [];
+      while (i < lines.length && /^>\s?/.test(lines[i])) q.push(lines[i++].replace(/^>\s?/, ''));
+      out.push(`<blockquote>${inline(q.join(' '))}</blockquote>`);
+      continue;
+    }
     if (!l.trim()) { i++; continue; }
     const para = [];
-    while (i < lines.length && lines[i].trim() && !/^(#{1,4}\s|```|\s*\||\s*([-*·]|\d+\.)\s+|---+\s*$)/.test(lines[i])) para.push(lines[i++]);
+    while (i < lines.length && lines[i].trim() && !/^(#{1,4}\s|```|\s*\||\s*([-*·]|\d+\.)\s+|---+\s*$|>)/.test(lines[i])) para.push(lines[i++]);
     out.push(`<p>${inline(para.join(' '))}</p>`);
   }
   return out.join('\n');
 }
 
 const shots = (dir) => (fs.existsSync(path.join(rel, dir)) ? fs.readdirSync(path.join(rel, dir)).filter((f) => /^\d+\.png$/.test(f)).sort((a, b) => parseInt(a) - parseInt(b)) : []);
-const size = (p) => (fs.existsSync(path.join(rel, p)) ? (fs.statSync(path.join(rel, p)).size / 1e6).toFixed(1) + ' MB' : '');
+const size = (p) => {
+  if (!fs.existsSync(path.join(rel, p))) return '';
+  const b = fs.statSync(path.join(rel, p)).size;
+  return b >= 1e6 ? (b / 1e6).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
+};
 const videos = [
   ['trailer.mp4', '스토어용 (한국어 화면, 자막 트랙 선택)', 'Store cut (Korean UI, selectable subtitle tracks)'],
   ['trailer-ad-ko.mp4', '광고용 · 한국어 자막 입힘', 'Ad cut · Korean captions burned in'],
@@ -83,7 +93,8 @@ const html = `<!doctype html>
 :root{--bg:#eef5ff;--paper:#ffffff;--ink:#1e2350;--muted:#5d6491;--line:#cdd9f0;--accent:#ff9a2e;--accent2:#3f8ee8;--chip:#e3ecfb}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#11152e;--paper:#1b2045;--ink:#eef2ff;--muted:#a9b0dd;--line:#2f3768;--accent:#ffb35c;--accent2:#7fb6ff;--chip:#262d5c}}
 :root[data-theme="dark"]{--bg:#11152e;--paper:#1b2045;--ink:#eef2ff;--muted:#a9b0dd;--line:#2f3768;--accent:#ffb35c;--accent2:#7fb6ff;--chip:#262d5c}
-*{box-sizing:border-box}
+*{box-sizing:border-box}[hidden]{display:none!important}
+blockquote{margin:8px 0;padding:6px 12px;border-left:4px solid var(--accent2);background:var(--chip);border-radius:6px}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif}
 a{color:var(--accent2)}
 header{padding:28px 16px 8px;max-width:1100px;margin:0 auto;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
@@ -140,7 +151,7 @@ dialog::backdrop{background:rgba(10,12,30,.8)}
 <section id="video"><h2>홍보 영상</h2>
   <p class="muted">모든 장면은 실제 게임 화면을 프레임 단위로 녹화한 것입니다(봇이 플레이어와 같은 누르기/떼기로 조작). 첫 장면은 강화 없는 첫 판입니다. 자막 파일: ${['trailer.ko.vtt', 'trailer.en.vtt', 'trailer.ko.srt', 'trailer.en.srt'].map((f) => `<a href="subtitles/${f}">${f}</a>`).join(' · ')}</p>
   <div class="row">${videos.map(([f, ko]) => `
-    <div class="vid"><video controls playsinline preload="metadata" src="${f}">${f === 'trailer.mp4' ? '<track kind="subtitles" srclang="ko" label="한국어" src="subtitles/trailer.ko.vtt" default><track kind="subtitles" srclang="en" label="English" src="subtitles/trailer.en.vtt">' : ''}</video>
+    <div class="vid"><video controls playsinline preload="metadata" poster="posters/${f.replace('.mp4', '.jpg')}" src="${f}">${f === 'trailer.mp4' ? '<track kind="subtitles" srclang="ko" label="한국어" src="subtitles/trailer.ko.vtt" default><track kind="subtitles" srclang="en" label="English" src="subtitles/trailer.en.vtt">' : ''}</video>
     <h3>${ko}</h3><div class="muted">${f} · ${size(f)} · H.264</div></div>`).join('')}
   </div>
 </section>
@@ -161,7 +172,7 @@ dialog::backdrop{background:rgba(10,12,30,.8)}
   ${docs.map(([id, , text], k) => `<div class="doc" data-docpane="${id}" ${k ? 'hidden' : ''}>${md(text)}</div>`).join('')}
 </section>
 <section id="files"><h2>파일 목록</h2><ul class="files">
-  ${['store/ko.md', 'store/en.md', 'icon-512.png', 'feature-1024x500.png', ...shots('screenshots').map((f) => 'screenshots/' + f), ...videos.map((v) => v[0]), 'subtitles/trailer.ko.vtt', 'subtitles/trailer.en.vtt', 'subtitles/trailer.ko.srt', 'subtitles/trailer.en.srt', 'plan.md', 'report.md', 'docs/analytics.md'].filter((f) => fs.existsSync(path.join(rel, f))).map((f) => `<li><a href="${f}">${f}</a> <span class="muted">${size(f) || ''}</span></li>`).join('')}
+  ${['store/ko.md', 'store/en.md', 'icon-512.png', 'feature-1024x500.png', ...shots('screenshots').map((f) => 'screenshots/' + f), ...videos.map((v) => v[0]), 'subtitles/trailer.ko.vtt', 'subtitles/trailer.en.vtt', 'subtitles/trailer.ko.srt', 'subtitles/trailer.en.srt', 'feature-1024x500-en.png', ...shots('screenshots-en').map((f) => 'screenshots-en/' + f), 'plan.md', 'report.md', 'docs/analytics.md'].filter((f) => fs.existsSync(path.join(rel, f))).map((f) => `<li><a href="${f}">${f}</a> <span class="muted">${size(f) || ''}</span></li>`).join('')}
 </ul></section>
 </main>
 <dialog id="zoom"><img alt=""></dialog>

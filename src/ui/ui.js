@@ -69,7 +69,7 @@ export class UI {
     this.app.later(() => { if (top.el.parentNode && !this.stack.includes(top)) top.el.parentNode.removeChild(top.el); top.el.classList.remove('closing'); }, 180);
     top.onClose?.();
     const next = this.stack[this.stack.length - 1];
-    if (next) next.el.classList.remove('behind'); else { this.layer.classList.add('hidden'); if (this.toastEl) this.toastEl.classList.remove('low'); }
+    if (next) next.el.classList.remove('behind'); else { this.layer.classList.add('hidden'); if (this.toastEl) this.toastEl.classList.remove('low'); this.flushToast(); }
     this.screens[this.current]?.refresh?.();
   }
 
@@ -82,6 +82,21 @@ export class UI {
     this.layer.classList.add('hidden');
     this.toastEl.classList.remove('low');
     this.busy = false;
+    this.flushToast();
+  }
+
+  // a message that should not sit on top of a popup: shown now, or right after the popups close
+  toastWhenFree(text, iconName) {
+    if (this.stack.length) { this.pendingToast = [text, iconName]; return; }
+    this.toast(text, iconName);
+  }
+
+  flushToast() {
+    if (!this.pendingToast || this.stack.length) return;
+    const [text, iconName] = this.pendingToast;
+    this.pendingToast = null;
+    // only in the village: never pops up over a run that has just started
+    this.app.later(() => { if (this.app.mode === 'hub' && !this.stack.length) this.toast(text, iconName); }, 250);
   }
 
   toast(text, iconName) {

@@ -66,7 +66,9 @@ export class App {
     await Promise.all([
       loadAtlas(atlasData, (k) => { if (fill) fill.style.width = Math.round(20 + k * 60) + '%'; }),
       preloadBg(['far_dawn', 'mid_dawn', 'isle_pine', 'sun', 'tex_snow', 'cloud_0'].filter((n) => !n.startsWith('cloud'))),
-      document.fonts && document.fonts.load ? Promise.race([document.fonts.load('20px GameFont', '펭귄 Penguin 0123'), new Promise((r) => setTimeout(r, 1500))]) : null,
+      // the font stylesheet arrives without blocking first paint; wait for it, then for the faces
+      new Promise((r) => { const l = document.getElementById('fontcss'); if (!l || l.media === 'all') r(); else { l.addEventListener('load', r, { once: true }); l.addEventListener('error', r, { once: true }); setTimeout(r, 2500); } })
+        .then(() => (document.fonts && document.fonts.load ? Promise.race([document.fonts.load('20px GameFont', '펭귄 Penguin 0123'), new Promise((r) => setTimeout(r, 1500))]) : null)),
     ]);
     if (fill) fill.style.width = '90%';
     // sound downloads after the first screen is up (or at the first touch), off the critical path
@@ -386,14 +388,15 @@ export class App {
   // at most one automatic popup per hub entry, never during play
   autoPopups(boot) {
     if (this.mode !== 'hub' || this.ui.hasPopup) return;
+    // the daily gift opens first; the welcome-back note waits until it is closed
+    if (E.featureOn(this.state, 'streak') && D.streakClaimable(this.state)) this.openDaily();
     if (this.welcome) {
       const w = this.welcome; this.welcome = null;
       const parts = [];
       if (w.rack > 0) parts.push(t('welcome.rack', { n: w.rack }));
       if (w.grown > 0) parts.push(t('welcome.grown', { n: w.grown }));
-      this.ui.toast(t('welcome.back') + (parts.length ? ' ' + parts.join(' · ') : ''), 'village');
+      this.ui.toastWhenFree(t('welcome.back') + (parts.length ? ' ' + parts.join(' · ') : ''), 'village');
     }
-    if (E.featureOn(this.state, 'streak') && D.streakClaimable(this.state)) { this.openDaily(); return; }
   }
 
   nextIslandBiome() {

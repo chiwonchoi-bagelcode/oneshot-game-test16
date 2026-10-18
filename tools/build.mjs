@@ -78,7 +78,9 @@ async function buildAll() {
   fs.mkdirSync(path.join(out, 'dev'), { recursive: true });
   fs.writeFileSync(path.join(out, 'dev/index.html'), html.replace(/__STAMP__/g, stamp).replace(/__BASE__/g, '../'));
   // css = embedded fonts + game styles
-  fs.writeFileSync(path.join(out, 'style.css'), fs.readFileSync(path.join(root, 'src/fonts.css'), 'utf8') + '\n' + fs.readFileSync(path.join(root, 'src/style.css'), 'utf8'));
+  // fonts (embedded, ~90 KB) load without blocking the first paint; the boot screen needs none
+  fs.writeFileSync(path.join(out, 'fonts.css'), fs.readFileSync(path.join(root, 'src/fonts.css'), 'utf8'));
+  fs.writeFileSync(path.join(out, 'style.css'), fs.readFileSync(path.join(root, 'src/style.css'), 'utf8'));
   // level json copies for the editor (import/export reference)
   copyDir(path.join(root, 'src/data/levels'), path.join(out, 'data/levels'));
   console.log('built', new Date().toLocaleTimeString());

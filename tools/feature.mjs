@@ -17,8 +17,8 @@ await s.eval((u) => {
   app.beginRun({ levels: app.levels, upgrades: u, startIndex: 4, assist: 0, modifiers: {} }, 'main');
   window.__cap.bot('good', 4);
 }, ups);
-// the 192 m soar found with the simulator (island 5, seed 4, takeoff ~8.3 s)
-await s.skipUntil('sim.time >= 8.42', 20);
+// a 165 m soar found with the simulator (island 5, seed 4, takeoff ~8.5 s)
+await s.skipUntil('sim.time >= 8.8', 20);
 await s.eval(() => {
   const app = window.__app;
   app.hud.el.classList.add('hidden');
@@ -28,7 +28,7 @@ await s.eval(() => {
   const ground = Math.min(app.run.sim.world.heightAt(p.x), app.run.sim.world.heightAt(p.x + 400));
   const z = Math.min(c.z * 1.7, (c.H * 0.52) / Math.max(200, p.y - ground));
   c.override = { x: p.x, z, anchor: 0.64, y: ground + (c.H * 0.06) / z };
-  app.run.floaters.clear();
+  app.run.floaters.clear(); app.run.floaters.add = () => {};
   const st = document.createElement('style');
   st.textContent = `.feat{position:absolute;left:44px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;z-index:50;pointer-events:none}
     .feat .logo-main{font-size:84px;animation:none;transform:rotate(-4deg);transform-origin:left center}
