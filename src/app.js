@@ -78,7 +78,9 @@ export class App {
     this.village.sync(this.state);
     if (fill) fill.style.width = '100%';
     document.getElementById('boot').classList.add('hide');
-    if (!this.state.tutorialDone && this.state.runs === 0) this.showTitle();
+    const editorLevel = this.editorLevel();
+    if (editorLevel) this.startEditorRun(editorLevel);
+    else if (!this.state.tutorialDone && this.state.runs === 0) this.showTitle();
     else this.goHub(true);
     requestAnimationFrame((tm) => this.frame(tm));
     if (typeof __DEV__ !== 'undefined' && __DEV__) import('./ui/debug.js').then((m) => m.installDebug(this)).catch((e) => console.warn(e));
@@ -317,6 +319,7 @@ export class App {
   // ---------------------------------------------------------------- runs
   startMainRun() {
     this.audio.unlock();
+    if (this.runMode === 'editor' && this.editorLv) { this.startEditorRun(this.editorLv); return; }
     const s = this.state;
     const lighthouse = E.isBuilt(s, 'lighthouse');
     const startIndex = lighthouse ? Math.min(s.startIsland || 0, s.bestIsland) : 0;
@@ -332,6 +335,18 @@ export class App {
       recordX: s.bestUnits > startX + 200 ? s.bestUnits : null,
     };
     this.beginRun(opts, 'main');
+  }
+
+  // level editor "test play": dev build only, never touches the player's save
+  editorLevel() {
+    if (typeof __DEV__ === 'undefined' || !__DEV__) return null;
+    if (!/editorLevel=1/.test(location.search)) return null;
+    try { return JSON.parse(localStorage.getItem('ps.editorLevel')); } catch (e) { return null; }
+  }
+
+  startEditorRun(lv) {
+    this.editorLv = lv;
+    this.beginRun({ levels: this.levels, upgrades: (lv.expect && lv.expect.upgrades) || {}, levelOverride: lv }, 'editor');
   }
 
   startTodayRun() {
@@ -378,6 +393,14 @@ export class App {
 
   onRunEnd(res) {
     const s = this.state;
+    if (this.runMode === 'editor') {
+      res.traveledM = res.distanceUnits / UPM;
+      const applied = { newBest: false, newIslands: [], unlocks: [], hatched: [], goals: [], rewards: { lines: [{ key: 'res.fishCollected', v: res.stats.fishValue }], total: res.stats.fishValue } };
+      this.mode = 'results';
+      this.hud.el.classList.add('hidden');
+      this.ui.show('results', { res, applied, tip: this.pickTip(res, applied), mode: 'editor', levelOf: (i) => (i === 0 ? this.editorLv : null) });
+      return;
+    }
     const startX = res.startIndex > 0 ? this.islandStartX(res.startIndex) : 0;
     res.traveledM = (res.distanceUnits - (this.runMode === 'today' ? 0 : startX)) / UPM;
     res.islandStats = this.run.sim.islandStats;

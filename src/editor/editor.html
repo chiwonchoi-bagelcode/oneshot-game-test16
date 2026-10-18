@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Penguin Slide — Level Editor</title>
+<style>
+  :root { --ink: #1e2350; --bg: #eef3fb; --panel: #fff; --line: #c9d3ea; --accent: #ff9a2e; --ok: #2e9d5b; --bad: #d64545; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', 'Apple SD Gothic Neo', sans-serif; color: var(--ink); background: var(--bg); }
+  #root { display: grid; grid-template-columns: 230px 1fr 300px; grid-template-rows: 46px 1fr 180px; height: 100%; }
+  header { grid-column: 1 / 4; display: flex; align-items: center; gap: 8px; padding: 0 10px; background: var(--ink); color: #fff; }
+  header h1 { font-size: 15px; margin: 0 12px 0 0; font-weight: 600; }
+  header .sp { flex: 1; }
+  button, select, input { font: inherit; }
+  button { border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 7px; padding: 5px 10px; cursor: pointer; }
+  button:hover { border-color: var(--ink); }
+  button.primary { background: var(--accent); border-color: #d97a12; color: #fff; font-weight: 600; }
+  header button { border-color: rgba(255,255,255,.3); }
+  #list { grid-column: 1; grid-row: 2 / 4; background: var(--panel); border-right: 1px solid var(--line); overflow: auto; }
+  #list .item { padding: 8px 10px; border-bottom: 1px solid #eef1f8; cursor: pointer; display: flex; gap: 8px; align-items: center; }
+  #list .item.sel { background: #fff3e0; }
+  #list .dot { width: 10px; height: 10px; border-radius: 50%; background: #bbb; flex: none; }
+  #list .dot.ok { background: var(--ok); } #list .dot.bad { background: var(--bad); }
+  #list .tools { padding: 8px; display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid var(--line); }
+  #view { grid-column: 2; grid-row: 2; position: relative; overflow: hidden; background: linear-gradient(#8fd0f5, #e8f6ff); }
+  #cv { width: 100%; height: 100%; display: block; cursor: crosshair; }
+  #toolbar { position: absolute; left: 10px; top: 10px; display: flex; gap: 4px; flex-wrap: wrap; max-width: calc(100% - 20px); }
+  #toolbar button.on { background: var(--ink); color: #fff; }
+  #hint { position: absolute; left: 10px; bottom: 8px; background: rgba(255,255,255,.85); padding: 4px 8px; border-radius: 6px; font-size: 12px; }
+  #props { grid-column: 3; grid-row: 2 / 4; background: var(--panel); border-left: 1px solid var(--line); overflow: auto; padding: 10px; }
+  #props h3 { margin: 12px 0 6px; font-size: 13px; }
+  #props label { display: grid; grid-template-columns: 110px 1fr; gap: 6px; align-items: center; margin: 4px 0; }
+  #props input, #props select { width: 100%; padding: 4px 6px; border: 1px solid var(--line); border-radius: 5px; }
+  #out { background: #101634; color: #d8e2ff; font: 12px/1.45 ui-monospace, Menlo, monospace; padding: 8px 10px; overflow: auto; white-space: pre-wrap; }
+  #out .ok { color: #7be0a0; } #out .bad { color: #ff8f8f; } #out .warn { color: #ffd166; }
+  #play { position: fixed; inset: 40px; display: none; background: #000; border: 3px solid var(--ink); border-radius: 14px; overflow: hidden; z-index: 10; }
+  #play.show { display: block; }
+  #play iframe { width: 100%; height: 100%; border: 0; }
+  #play button { position: absolute; right: 10px; top: 10px; z-index: 2; }
+</style>
+</head>
+<body>
+<div id="root">
+  <header>
+    <h1>Level Editor</h1>
+    <button id="bValidate" class="primary">검증 Validate</button>
+    <button id="bPlay">시험 플레이 Test play</button>
+    <span class="sp"></span>
+    <button id="bImport">가져오기 Import</button>
+    <button id="bExport">내보내기 Export</button>
+    <button id="bExportAll">전체 내보내기</button>
+    <input id="file" type="file" accept=".json,application/json" multiple hidden>
+  </header>
+  <div id="list"></div>
+  <div id="view">
+    <canvas id="cv"></canvas>
+    <div id="toolbar"></div>
+    <div id="hint"></div>
+  </div>
+  <div id="props"></div>
+  <div id="out" style="grid-column:2;grid-row:3"></div>
+</div>
+<div id="play"><button id="bClose">닫기 Close</button><iframe id="frame"></iframe></div>
+<script src="editor.js?v=__STAMP__"></script>
+</body>
+</html>
