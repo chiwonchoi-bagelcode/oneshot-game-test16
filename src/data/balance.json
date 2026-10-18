@@ -1,0 +1,188 @@
+{
+  "_comment": "All tunable numbers live here. Physics units: world units (~px at zoom 1), seconds. 1 m shown to the player = metersPerUnit.",
+  "display": {
+    "unitsPerMeter": 10
+  },
+  "physics": {
+    "gravity": 1500,
+    "pressGravityMul": 1.9,
+    "airPressGravityMul": 3.0,
+    "groundFriction": 30,
+    "airDrag": 4e-05,
+    "groundDrag": 0.0001,
+    "minSpeed": 260,
+    "maxSpeed": 3000,
+    "startSpeed": 420,
+    "radius": 40,
+    "perfectAngle": 0.36,
+    "perfectMinDownSlope": 0.12,
+    "perfectBoost": 1.08,
+    "bonkAngle": 0.95,
+    "bonkKeep": 0.62,
+    "bonkStun": 0.35,
+    "landKeep": 0.97,
+    "feverChain": 3,
+    "feverTime": 6.0,
+    "feverSpeedMul": 1.18,
+    "feverBlizzardPush": 700,
+    "iceAccelMul": 1.35,
+    "iceFrictionMul": 0.15,
+    "cloudBounce": 0.35,
+    "windAccel": 2600,
+    "geyserImpulse": 1700,
+    "ringBoost": 1.22,
+    "heightMilestones": [
+      40,
+      80,
+      150,
+      250,
+      400,
+      600
+    ],
+    "heightMilestoneFish": [
+      2,
+      4,
+      6,
+      10,
+      15,
+      25
+    ]
+  },
+  "upgrades": {
+    "flap": {
+      "order": 1,
+      "maxLevel": 10,
+      "baseCost": 20,
+      "costGrowth": 1.52,
+      "values": [
+        0,
+        0.18,
+        0.3,
+        0.4,
+        0.48,
+        0.55,
+        0.61,
+        0.66,
+        0.7,
+        0.74,
+        0.78
+      ],
+      "unlock": {
+        "runs": 1
+      }
+    },
+    "slide": {
+      "order": 2,
+      "maxLevel": 10,
+      "baseCost": 35,
+      "costGrowth": 1.52,
+      "values": [
+        0,
+        0.08,
+        0.15,
+        0.21,
+        0.26,
+        0.3,
+        0.34,
+        0.37,
+        0.4,
+        0.43,
+        0.45
+      ],
+      "unlock": {
+        "runs": 2
+      }
+    },
+    "magnet": {
+      "order": 3,
+      "maxLevel": 8,
+      "baseCost": 60,
+      "costGrowth": 1.55,
+      "values": [
+        0,
+        70,
+        100,
+        130,
+        160,
+        190,
+        220,
+        250,
+        280
+      ],
+      "unlock": {
+        "island": 2
+      }
+    },
+    "glide": {
+      "order": 4,
+      "maxLevel": 8,
+      "baseCost": 110,
+      "costGrowth": 1.55,
+      "values": [
+        0,
+        0.1,
+        0.17,
+        0.23,
+        0.28,
+        0.32,
+        0.35,
+        0.38,
+        0.41
+      ],
+      "unlock": {
+        "island": 3
+      }
+    },
+    "scarf": {
+      "order": 5,
+      "maxLevel": 5,
+      "baseCost": 250,
+      "costGrowth": 1.8,
+      "values": [
+        0,
+        1,
+        1,
+        2,
+        2,
+        3
+      ],
+      "pushback": [
+        0,
+        600,
+        900,
+        900,
+        1200,
+        1200
+      ],
+      "unlock": {
+        "island": 4
+      }
+    }
+  },
+  "blizzard": {
+    "maxGap": 1500,
+    "dangerGap": 520,
+    "rubberBandMul": 2.2,
+    "tutorialDelay": 9.0
+  },
+  "economy": {
+    "fishValue": 1,
+    "goldFishValue": 10,
+    "distanceFishPerMeter": 0.04,
+    "islandFirstBonus": [
+      0,
+      0,
+      60,
+      120,
+      200,
+      300,
+      420,
+      560,
+      720,
+      900,
+      1100
+    ],
+    "islandRepeatBonus": 0.15,
+    "populationBonusPerPenguin": 0.01
+  }
+}

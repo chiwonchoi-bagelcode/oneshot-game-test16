@@ -1,0 +1,713 @@
+{
+ "_comment": "Input for tools/make-levels.mjs. expect.upgrades = the upgrade state a player typically has when first attempting this island; verify-levels checks clearability with it.",
+ "islands": [
+  {
+   "id": "island01",
+   "seed": 101,
+   "biome": "dawn",
+   "name": {
+    "ko": "첫 눈밭",
+    "en": "First Snow"
+   },
+   "sections": [
+    [
+     "gentle",
+     3
+    ],
+    [
+     "regular",
+     4
+    ],
+    [
+     "choppy",
+     2
+    ],
+    [
+     "regular",
+     3
+    ],
+    [
+     "big",
+     1
+    ],
+    [
+     "regular",
+     3
+    ]
+   ],
+   "blizzard": {
+    "startGap": 1100,
+    "speed": 480,
+    "accel": 5
+   },
+   "expect": {
+    "upgrades": {}
+   },
+   "trailGap": 700,
+   "groundFish": 0.5,
+   "highArcs": 1,
+   "highLift": 560,
+   "decor": [
+    "rock",
+    "snowman",
+    "crystal"
+   ],
+   "goals": [
+    {
+     "type": "fish",
+     "n": 40
+    },
+    {
+     "type": "perfect",
+     "n": 3
+    }
+   ]
+  },
+  {
+   "id": "island02",
+   "seed": 202,
+   "biome": "pine",
+   "name": {
+    "ko": "소나무 언덕",
+    "en": "Pine Ridge"
+   },
+   "sections": [
+    [
+     "regular",
+     3
+    ],
+    [
+     "tall",
+     3
+    ],
+    [
+     "big",
+     1
+    ],
+    [
+     "choppy",
+     3
+    ],
+    [
+     "regular",
+     3
+    ],
+    [
+     "big",
+     1
+    ],
+    [
+     "tall",
+     3
+    ],
+    [
+     "regular",
+     2
+    ]
+   ],
+   "blizzard": {
+    "startGap": 1200,
+    "speed": 640,
+    "accel": 6
+   },
+   "expect": {
+    "upgrades": {
+     "flap": 1
+    }
+   },
+   "trailGap": 800,
+   "groundFish": 0.35,
+   "highArcs": 2,
+   "highLift": 640,
+   "decor": [
+    "pine",
+    "pine",
+    "rock"
+   ],
+   "goals": [
+    {
+     "type": "gold",
+     "n": 1
+    },
+    {
+     "type": "height",
+     "n": 60
+    }
+   ]
+  },
+  {
+   "id": "island03",
+   "seed": 303,
+   "biome": "lake",
+   "intro": "ice",
+   "name": {
+    "ko": "얼음 호수",
+    "en": "Glass Lake"
+   },
+   "sections": [
+    [
+     "regular",
+     3
+    ],
+    [
+     "long",
+     1
+    ],
+    [
+     "regular",
+     3
+    ],
+    [
+     "choppy",
+     2
+    ],
+    [
+     "tall",
+     3
+    ],
+    [
+     "long",
+     1
+    ],
+    [
+     "regular",
+     3
+    ],
+    [
+     "big",
+     1
+    ],
+    [
+     "regular",
+     3
+    ]
+   ],
+   "features": {
+    "ice": 0.45
+   },
+   "featureStart": 1,
+   "blizzard": {
+    "startGap": 1200,
+    "speed": 620,
+    "accel": 6
+   },
+   "expect": {
+    "upgrades": {
+     "flap": 2,
+     "slide": 1,
+     "magnet": 1
+    }
+   },
+   "trailGap": 850,
+   "groundFish": 0.3,
+   "highArcs": 2,
+   "highLift": 700,
+   "decor": [
+    "crystal",
+    "rock",
+    "crystal"
+   ],
+   "goals": [
+    {
+     "type": "fever",
+     "n": 1
+    },
+    {
+     "type": "fish",
+     "n": 80
+    }
+   ]
+  },
+  {
+   "id": "island04",
+   "seed": 404,
+   "biome": "wind",
+   "intro": "wind",
+   "name": {
+    "ko": "바람 계곡",
+    "en": "Windy Valley"
+   },
+   "sections": [
+    [
+     "regular",
+     3
+    ],
+    [
+     "tall",
+     3
+    ],
+    [
+     "choppy",
+     3
+    ],
+    [
+     "regular",
+     3
+    ],
+    [
+     "big",
+     2
+    ],
+    [
+     "tall",
+     3
+    ],
+    [
+     "regular",
+     3
+    ]
+   ],
+   "features": {
+    "wind": 0.4
+   },
+   "featureStart": 1,
+   "blizzard": {
+    "startGap": 1250,
+    "speed": 760,
+    "accel": 7
+   },
+   "expect": {
+    "upgrades": {
+     "flap": 3,
+     "slide": 2,
+     "magnet": 1,
+     "glide": 1
+    }
+   },
+   "trailGap": 900,
+   "groundFish": 0.3,
+   "highArcs": 2,
+   "highLift": 800,
+   "decor": [
+    "spire",
+    "pine",
+    "rock"
+   ],
+   "goals": [
+    {
+     "type": "height",
+     "n": 120
+    },
+    {
+     "type": "perfect",
+     "n": 6
+    }
+   ]
+  },
+  {
+   "id": "island05",
+   "seed": 505,
+   "biome": "sunset",
+   "name": {
+    "ko": "노을 절벽",
+    "en": "Sunset Cliffs"
+   },
+   "sections": [
+    [
+     "long",
+     2
+    ],
+    [
+     "regular",
+     3
+    ],
+    [
+     "stairs",
+     3
+    ],
+    [
+     "big",
+     1
+    ],
+    [
+     "choppy",
+     3
+    ],
+    [
+     "tall",
+     3
+    ],
+    [
+     "long",
+     2
+    ],
+    [
+     "regular",
+     3
+    ],
+    [
+     "big",
+     1
+    ]
+   ],
+   "features": {
+    "ice": 0.2,
+    "wind": 0.2
+   },
+   "blizzard": {
+    "startGap": 1250,
+    "speed": 700,
+    "accel": 7
+   },
+   "expect": {
+    "upgrades": {
+     "flap": 4,
+     "slide": 3,
+     "magnet": 2,
+     "glide": 1
+    }
+   },
+   "trailGap": 900,
+   "groundFish": 0.3,
+   "highArcs": 3,
+   "highLift": 850,
+   "decor": [
+    "rock",
+    "pine",
+    "spire"
+   ],
+   "goals": [
+    {
+     "type": "fish",
+     "n": 140
+    },
+    {
+     "type": "fever",
+     "n": 2
+    }
+   ]
+  },
+  {
+   "id": "island06",
+   "seed": 606,
+   "biome": "geyser",
+   "intro": "geyser",
+   "name": {
+    "ko": "김 서린 섬",
+    "en": "Steam Isle"
+   },
+   "sections": [
+    [
+     "regular",
+     3
+    ],
+    [
+     "tall",
+     3
+    ],
+    [
+     "choppy",
+     3
+    ],
+    [
+     "regular",
+     3
+    ],
+    [
+     "big",
+     2
+    ],
+    [
+     "tall",
+     4
+    ],
+    [
+     "regular",
+     3
+    ],
+    [
+     "long",
+     1
+    ]
+   ],
+   "features": {
+    "geyser": 0.4
+   },
+   "featureStart": 1,
+   "blizzard": {
+    "startGap": 1300,
+    "speed": 800,
+    "accel": 8
+   },
+   "expect": {
+    "upgrades": {
+     "flap": 5,
+     "slide": 4,
+     "magnet": 2,
+     "glide": 2,
+     "scarf": 1
+    }
+   },
+   "trailGap": 950,
+   "groundFish": 0.25,
+   "highArcs": 3,
+   "highLift": 950,
+   "decor": [
+    "rock",
+    "spire",
+    "rock"
+   ],
+   "goals": [
+    {
+     "type": "height",
+     "n": 200
+    },
+    {
+     "type": "gold",
+     "n": 2
+    }
+   ]
+  },
+  {
+   "id": "island07",
+   "seed": 707,
+   "biome": "aurora",
+   "intro": "ring",
+   "name": {
+    "ko": "오로라 섬",
+    "en": "Aurora Isle"
+   },
+   "sections": [
+    [
+     "tall",
+     4
+    ],
+    [
+     "regular",
+     3
+    ],
+    [
+     "big",
+     2
+    ],
+    [
+     "choppy",
+     3
+    ],
+    [
+     "tall",
+     4
+    ],
+    [
+     "long",
+     2
+    ],
+    [
+     "regular",
+     3
+    ],
+    [
+     "big",
+     1
+    ]
+   ],
+   "features": {
+    "ring": 0.55,
+    "ice": 0.15,
+    "wind": 0.15
+   },
+   "blizzard": {
+    "startGap": 1300,
+    "speed": 800,
+    "accel": 8
+   },
+   "expect": {
+    "upgrades": {
+     "flap": 6,
+     "slide": 5,
+     "magnet": 3,
+     "glide": 3,
+     "scarf": 1
+    }
+   },
+   "trailGap": 950,
+   "groundFish": 0.25,
+   "highArcs": 3,
+   "highLift": 1000,
+   "decor": [
+    "crystal",
+    "pine",
+    "crystal"
+   ],
+   "goals": [
+    {
+     "type": "rings",
+     "n": 4
+    },
+    {
+     "type": "fish",
+     "n": 200
+    }
+   ]
+  },
+  {
+   "id": "island08",
+   "seed": 808,
+   "biome": "cloud",
+   "surface": "cloud",
+   "intro": "cloud",
+   "name": {
+    "ko": "구름 위 하늘",
+    "en": "Above the Clouds"
+   },
+   "startY": 600,
+   "sections": [
+    [
+     "cloud",
+     6
+    ],
+    [
+     "choppy",
+     3
+    ],
+    [
+     "cloud",
+     5
+    ],
+    [
+     "big",
+     2
+    ],
+    [
+     "cloud",
+     5
+    ],
+    [
+     "long",
+     1
+    ],
+    [
+     "cloud",
+     3
+    ]
+   ],
+   "features": {
+    "geyser": 0.15,
+    "wind": 0.2
+   },
+   "blizzard": {
+    "startGap": 1350,
+    "speed": 980,
+    "accel": 9
+   },
+   "expect": {
+    "upgrades": {
+     "flap": 7,
+     "slide": 6,
+     "magnet": 4,
+     "glide": 4,
+     "scarf": 2
+    }
+   },
+   "trailGap": 1000,
+   "groundFish": 0.2,
+   "highArcs": 4,
+   "highLift": 1100,
+   "decor": [
+    "balloon",
+    "star",
+    "balloon"
+   ],
+   "goals": [
+    {
+     "type": "perfect",
+     "n": 12
+    },
+    {
+     "type": "height",
+     "n": 300
+    }
+   ]
+  },
+  {
+   "id": "island09",
+   "seed": 909,
+   "biome": "stars",
+   "name": {
+    "ko": "하늘 끝",
+    "en": "Sky's End"
+   },
+   "sections": [
+    [
+     "tall",
+     4
+    ],
+    [
+     "long",
+     2
+    ],
+    [
+     "choppy",
+     3
+    ],
+    [
+     "big",
+     2
+    ],
+    [
+     "stairs",
+     3
+    ],
+    [
+     "regular",
+     4
+    ],
+    [
+     "big",
+     2
+    ],
+    [
+     "tall",
+     4
+    ],
+    [
+     "long",
+     2
+    ],
+    [
+     "big",
+     2
+    ]
+   ],
+   "features": {
+    "ice": 0.2,
+    "wind": 0.2,
+    "geyser": 0.15,
+    "ring": 0.4
+   },
+   "blizzard": {
+    "startGap": 1400,
+    "speed": 1050,
+    "accel": 10
+   },
+   "expect": {
+    "upgrades": {
+     "flap": 8,
+     "slide": 7,
+     "magnet": 5,
+     "glide": 5,
+     "scarf": 3
+    }
+   },
+   "trailGap": 1000,
+   "groundFish": 0.2,
+   "highArcs": 4,
+   "highLift": 1200,
+   "decor": [
+    "crystal",
+    "star",
+    "crystal"
+   ],
+   "goals": [
+    {
+     "type": "fish",
+     "n": 300
+    },
+    {
+     "type": "fever",
+     "n": 3
+    }
+   ]
+  }
+ ]
+}
