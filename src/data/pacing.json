@@ -1,0 +1,27 @@
+{
+ "_comment": "Design targets for a new player's first days. firstReachRun[i] = run when island i+1 is first reached. Typical player skill at run r = skillMax*(1-exp(-(r-1)/learnTau)) (bot profile interpolation novice->good). clearTarget = share of attempts that cross island i+1 with its designed upgrades (island-specs expect.upgrades). Used by tools/calibrate-islands.mjs and tools/run-sim.mjs.",
+ "firstReachRun": [
+  1,
+  3,
+  8,
+  15,
+  23,
+  33,
+  45,
+  59,
+  75
+ ],
+ "skillMax": 0.75,
+ "clearTarget": [
+  0.6,
+  0.5,
+  0.45,
+  0.42,
+  0.4,
+  0.38,
+  0.36,
+  0.34,
+  0.32
+ ],
+ "learnTau": 8
+}

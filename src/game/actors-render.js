@@ -58,7 +58,7 @@ export class PenguinRenderer {
     }
     this.angle = lerpAngle(this.angle, want, Math.min(1, (p.ground ? 18 : 6) * dt));
     const gap = sim.gap;
-    const wt = gap < sim.balance.blizzard.dangerGap ? 1 : 0;
+    const wt = gap < sim.dangerGap() ? 1 : 0;
     this.worry += (wt - this.worry) * Math.min(1, 4 * dt);
   }
 
@@ -190,7 +190,7 @@ export class BlizzardRenderer {
     const caught = sim.state === 'caught';
     const B = sim.balance.blizzard;
     const gap = sim.gap;
-    const close = caught ? 1 : Math.max(0, Math.min(1, 1 - gap / B.maxGap));
+    const close = caught ? 1 : Math.max(0, Math.min(1, 1 - gap / sim.maxGap()));
     this.closeS = (this.closeS ?? close) + (close - (this.closeS ?? close)) * 0.12;
     const c = this.closeS;
     const size = Math.min(W * 0.7, 330);
@@ -244,7 +244,7 @@ export class BlizzardRenderer {
     // the spirit's face
     let mood;
     if (caught) mood = 'laugh';
-    else if (gap < B.dangerGap) mood = 'grin';
+    else if (gap < sim.dangerGap()) mood = 'grin';
     else if (c < 0.12) mood = 'sulk';
     else mood = Math.floor(time * 3) % 2 ? 'blow0' : 'blow1';
     const p = sim.p;

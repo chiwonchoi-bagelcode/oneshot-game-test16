@@ -117,7 +117,7 @@ export function todayLevel(state) {
     amp: info.mod === 'big' ? 1.3 : info.mod === 'choppy' ? 0.7 : 1,
     features,
     name: { ko: '오늘의 섬', en: 'Island of the Day' },
-    blizzard: { startGap: 1300, speed: 520 + info.tier * 75, accel: 6 },
+    blizzard: { speed: 540 + info.tier * 110, accel: 6 },
   });
   if (info.mod === 'gold') for (const f of lv.fish) if (f.type === 'arc') f.gold = true;
   return { level: lv, info };

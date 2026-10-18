@@ -200,7 +200,7 @@ export function runRewards(state, res) {
   const height = res.stats.milestoneFish;
   if (height > 0) lines.push({ key: 'res.fishHeight', v: height });
   let island = 0;
-  for (const idx of res.newIslands) island += E.islandFirstBonus[Math.min(idx + 1, E.islandFirstBonus.length - 1)] || 0;
+  for (const idx of res.newIslands) island += idx + 1 < E.islandFirstBonus.length - 1 ? E.islandFirstBonus[idx + 1] : E.endlessIslandBonus;
   if (island > 0) lines.push({ key: 'res.fishIsland', v: island });
   let sub = collected + dist + height + island;
   const pct = villagePct(state);

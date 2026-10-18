@@ -2,7 +2,7 @@
 // (particles, words, sound, vibration, camera), runs the first-run tutorial and the hints.
 import balance from '../data/balance.json';
 import { RunSim, STEP } from '../core/run.js';
-import { generateLevel } from '../core/world.js';
+import { endlessGenerator } from '../core/endless.js';
 import { Camera } from './camera.js';
 import { WorldRenderer } from './world-render.js';
 import { PenguinRenderer, BlizzardRenderer } from './actors-render.js';
@@ -15,22 +15,6 @@ const TAU = Math.PI * 2;
 const PENTA = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24];
 const step = (k) => Math.pow(2, PENTA[Math.max(0, Math.min(PENTA.length - 1, k))] / 12);
 
-export function endlessGenerator(levels) {
-  const biomes = ['cloud', 'stars', 'aurora', 'sunset'];
-  return (index) => {
-    const k = index - levels.length;
-    const lv = generateLevel(7000 + k * 131, {
-      id: 'endless_' + k,
-      biome: biomes[k % biomes.length],
-      surface: biomes[k % biomes.length] === 'cloud' ? 'cloud' : 'snow',
-      name: { ko: `끝없는 하늘 ${k + 1}`, en: `Endless Sky ${k + 1}` },
-      features: ['ice', 'wind', 'geyser', 'ring'],
-      amp: 1.15,
-      blizzard: { startGap: 1400, speed: 1080 + k * 40, accel: 10 },
-    });
-    return lv;
-  };
-}
 
 export class RunScene {
   constructor(app) {
@@ -176,7 +160,7 @@ export class RunScene {
     const speed = p.ground ? p.s : Math.hypot(p.vx, p.vy);
     this.app.audio.setSlide(p.ground && sim.state === 'run' ? Math.min(1, speed / 2200) : 0, this.pressing, p.ice);
     const B = balance.blizzard;
-    this.app.audio.setWind(sim.state === 'caught' ? 0.6 : Math.max(0.08, Math.min(1, 1 - (sim.gap - 200) / (B.maxGap)) * 0.9));
+    this.app.audio.setWind(sim.state === 'caught' ? 0.6 : Math.max(0.08, Math.min(1, 1 - sim.gap / sim.maxGap()) * 0.9));
     if (this.app.hud && this.time - this.lastHud > 0.08) { this.lastHud = this.time; this.app.hud.update(this); }
   }
 

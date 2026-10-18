@@ -61,7 +61,7 @@ export class Island {
     this.geysers = (level.geysers || []).map((g) => ({ x: startX + g.x, used: false, t: 0 }));
     this.rings = (level.rings || []).map((r) => ({ x: startX + r.x, y: r.y, r: r.r || 90, used: false }));
     this.decor = (level.decor || []).map((d) => ({ ...d, x: startX + d.x }));
-    this.blizzard = Object.assign({ startGap: 1100, speed: 700, accel: 6 }, level.blizzard || {});
+    this.blizzard = Object.assign({ speed: 700, accel: 6 }, level.blizzard || {});
     this.fish = expandFish(level, this, startX).sort((a, b) => a.x - b.x);
     this.fishTotal = this.fish.reduce((s, f) => s + (f.gold ? 10 : 1), 0);
     this._seg = 0;
@@ -266,6 +266,6 @@ export function generateLevel(seed, opts = {}) {
     points: pts,
     fish, ice, wind, geysers, rings,
     decor: [],
-    blizzard: Object.assign({ startGap: 1200, speed: 1150, accel: 8 }, opts.blizzard || {}),
+    blizzard: Object.assign({ speed: 1150, accel: 8 }, opts.blizzard || {}),
   };
 }

@@ -322,7 +322,7 @@ export class App {
     if (this.runMode === 'editor' && this.editorLv) { this.startEditorRun(this.editorLv); return; }
     const s = this.state;
     const lighthouse = E.isBuilt(s, 'lighthouse');
-    const startIndex = lighthouse ? Math.min(s.startIsland || 0, s.bestIsland) : 0;
+    const startIndex = lighthouse ? Math.min(s.startIsland || 0, s.bestIsland, this.levels.length - 1) : 0;
     const startX = this.islandStartX(startIndex);
     const opts = {
       levels: this.levels,

@@ -36,8 +36,7 @@
     ]
    ],
    "blizzard": {
-    "startGap": 1100,
-    "speed": 480,
+    "speed": 430,
     "accel": 5
    },
    "expect": {
@@ -79,7 +78,7 @@
     ],
     [
      "tall",
-     3
+     2
     ],
     [
      "big",
@@ -87,7 +86,7 @@
     ],
     [
      "choppy",
-     3
+     2
     ],
     [
      "regular",
@@ -98,22 +97,18 @@
      1
     ],
     [
-     "tall",
-     3
-    ],
-    [
      "regular",
      2
     ]
    ],
    "blizzard": {
-    "startGap": 1200,
-    "speed": 640,
+    "speed": 500,
     "accel": 6
    },
    "expect": {
     "upgrades": {
-     "flap": 1
+     "flap": 1,
+     "slide": 1
     }
    },
    "trailGap": 800,
@@ -188,14 +183,13 @@
    },
    "featureStart": 1,
    "blizzard": {
-    "startGap": 1200,
-    "speed": 620,
+    "speed": 640,
     "accel": 6
    },
    "expect": {
     "upgrades": {
      "flap": 2,
-     "slide": 1,
+     "slide": 2,
      "magnet": 1
     }
    },
@@ -263,15 +257,14 @@
    },
    "featureStart": 1,
    "blizzard": {
-    "startGap": 1250,
-    "speed": 760,
+    "speed": 780,
     "accel": 7
    },
    "expect": {
     "upgrades": {
      "flap": 3,
-     "slide": 2,
-     "magnet": 1,
+     "slide": 3,
+     "magnet": 2,
      "glide": 1
     }
    },
@@ -304,6 +297,10 @@
     "en": "Sunset Cliffs"
    },
    "sections": [
+    [
+     "regular",
+     2
+    ],
     [
      "long",
      2
@@ -346,16 +343,16 @@
     "wind": 0.2
    },
    "blizzard": {
-    "startGap": 1250,
-    "speed": 700,
+    "speed": 1080,
     "accel": 7
    },
    "expect": {
     "upgrades": {
      "flap": 4,
-     "slide": 3,
+     "slide": 4,
      "magnet": 2,
-     "glide": 1
+     "glide": 2,
+     "scarf": 1
     }
    },
    "trailGap": 900,
@@ -426,16 +423,15 @@
    },
    "featureStart": 1,
    "blizzard": {
-    "startGap": 1300,
-    "speed": 800,
+    "speed": 1300,
     "accel": 8
    },
    "expect": {
     "upgrades": {
      "flap": 5,
-     "slide": 4,
-     "magnet": 2,
-     "glide": 2,
+     "slide": 5,
+     "magnet": 3,
+     "glide": 3,
      "scarf": 1
     }
    },
@@ -469,6 +465,10 @@
     "en": "Aurora Isle"
    },
    "sections": [
+    [
+     "regular",
+     2
+    ],
     [
      "tall",
      4
@@ -508,17 +508,16 @@
     "wind": 0.15
    },
    "blizzard": {
-    "startGap": 1300,
-    "speed": 800,
+    "speed": 1520,
     "accel": 8
    },
    "expect": {
     "upgrades": {
      "flap": 6,
-     "slide": 5,
-     "magnet": 3,
-     "glide": 3,
-     "scarf": 1
+     "slide": 6,
+     "magnet": 4,
+     "glide": 4,
+     "scarf": 2
     }
    },
    "trailGap": 950,
@@ -554,6 +553,10 @@
    "startY": 600,
    "sections": [
     [
+     "regular",
+     2
+    ],
+    [
      "cloud",
      6
     ],
@@ -587,16 +590,15 @@
     "wind": 0.2
    },
    "blizzard": {
-    "startGap": 1350,
-    "speed": 980,
+    "speed": 1680,
     "accel": 9
    },
    "expect": {
     "upgrades": {
      "flap": 7,
-     "slide": 6,
-     "magnet": 4,
-     "glide": 4,
+     "slide": 7,
+     "magnet": 5,
+     "glide": 5,
      "scarf": 2
     }
    },
@@ -629,6 +631,10 @@
     "en": "Sky's End"
    },
    "sections": [
+    [
+     "regular",
+     2
+    ],
     [
      "tall",
      4
@@ -677,16 +683,15 @@
     "ring": 0.4
    },
    "blizzard": {
-    "startGap": 1400,
-    "speed": 1050,
+    "speed": 1880,
     "accel": 10
    },
    "expect": {
     "upgrades": {
      "flap": 8,
-     "slide": 7,
-     "magnet": 5,
-     "glide": 5,
+     "slide": 8,
+     "magnet": 6,
+     "glide": 6,
      "scarf": 3
     }
    },

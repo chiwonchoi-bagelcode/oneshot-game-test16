@@ -24,7 +24,7 @@ for (let i = 0; i < levels.length; i++) {
   report.push({ file: files[i], structure: st, clear: cl, ok });
   const P = cl.profiles;
   const fmt = (p) => p ? `${Math.round(p.clearRate * 100)}% ${p.avgTime.toFixed(0)}s prog${Math.round(p.avgProgress * 100)} f${p.avgFish.toFixed(0)}` : '-';
-  console.log(`${ok ? 'PASS' : 'FAIL'} ${files[i]} ${lv.name.en.padEnd(16)} ${String(cl.lengthM).padStart(5)}m fish${String(cl.fishAvailable).padStart(4)} | expert ${fmt(P.expert)} | good ${fmt(P.good)} | avg ${fmt(P.average)} | novice ${fmt(P.novice)}`);
+  console.log(`${ok ? 'PASS' : 'FAIL'} ${files[i]} ${lv.name.en.padEnd(16)} ${String(cl.lengthM).padStart(5)}m fish${String(cl.fishAvailable).padStart(4)} | expert ${fmt(P.expert)} | good ${fmt(P.good)} | avg ${fmt(P.average)} | novice ${fmt(P.novice)} | good+2 ${Math.round(cl.goodPlus2 * 100)}%`);
   for (const e of st.errors) console.log('   error:', e);
   for (const w of st.warnings) console.log('   warn :', w);
   for (const n of cl.notes) console.log('   note :', n);

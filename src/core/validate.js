@@ -53,13 +53,26 @@ export function checkClearable(levels, index, balance, { seeds = 6, profiles = [
       avgMaxHeightM: height / seeds / balance.display.unitsPerMeter,
     };
   }
+  // a player a few attempts later: expected upgrades + 2 levels each
+  const plus = {};
+  for (const k of ['flap', 'slide', 'magnet', 'glide', 'scarf']) plus[k] = Math.min(balance.upgrades[k].maxLevel, (ups[k] || 0) + 2);
+  let pc = 0;
+  for (let s = 1; s <= seeds; s++) {
+    const sim2 = new RunSim({ levels: levels.slice(0, index + 1), balance, upgrades: plus, startIndex: index });
+    const r2 = playRun(sim2, makeBot('good', s * 53 + index), 400);
+    if (r2.islandsCleared > 0 || sim2.p.x >= sim2.island.endX - 5) pc++;
+  }
+  result.goodPlus2 = pc / seeds;
   const sim = new RunSim({ levels: levels.slice(0, index + 1), balance, startIndex: index });
   result.fishAvailable = sim.island.fishTotal;
   result.lengthM = Math.round(sim.island.length / balance.display.unitsPerMeter);
   const P = result.profiles;
-  result.pass = (P.good ? P.good.clearRate >= 0.8 : true) && (P.expert ? P.expert.clearRate >= 1 : true);
+  // pass = always beatable by a precise player with the expected upgrades, and a good player
+  // clears it most of the time once they have a couple more upgrade levels
+  result.pass = (P.expert ? P.expert.clearRate >= 1 : true) && result.goodPlus2 >= 0.6;
   result.notes = [];
-  if (P.good && P.good.clearRate < 0.8) result.notes.push('too hard: good player with expected upgrades clears < 80%');
+  if (P.expert && P.expert.clearRate < 1) result.notes.push('not reliably beatable: expert with expected upgrades fails');
+  if (result.goodPlus2 < 0.6) result.notes.push('too hard: good player with +2 upgrade levels clears < 60%');
   if (P.average && P.average.clearRate > 0.95 && index > 0) result.notes.push('maybe too easy: average player always clears');
   if (P.average && P.average.clearRate < 0.2) result.notes.push('steep: average player rarely clears (upgrades or practice needed)');
   return result;

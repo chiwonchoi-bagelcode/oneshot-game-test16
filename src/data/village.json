@@ -18,7 +18,7 @@
   {
    "id": "fishrack",
    "type": "fishrack",
-   "cost": 55,
+   "cost": 115,
    "after": "igloo1",
    "plot": [
     525,
@@ -32,7 +32,7 @@
   {
    "id": "igloo2",
    "type": "igloo",
-   "cost": 90,
+   "cost": 190,
    "after": "igloo1",
    "plot": [
     140,
@@ -46,7 +46,7 @@
   {
    "id": "workshop",
    "type": "workshop",
-   "cost": 150,
+   "cost": 310,
    "after": "igloo2",
    "plot": [
     110,
@@ -60,7 +60,7 @@
   {
    "id": "lighthouse",
    "type": "lighthouse",
-   "cost": 220,
+   "cost": 455,
    "after": "fishrack",
    "plot": [
     565,
@@ -74,7 +74,7 @@
   {
    "id": "igloo3",
    "type": "igloo",
-   "cost": 300,
+   "cost": 625,
    "after": "workshop",
    "plot": [
     470,
@@ -88,7 +88,7 @@
   {
    "id": "tent",
    "type": "tent",
-   "cost": 380,
+   "cost": 795,
    "after": "igloo3",
    "plot": [
     215,
@@ -102,7 +102,7 @@
   {
    "id": "hotspring",
    "type": "hotspring",
-   "cost": 480,
+   "cost": 1000,
    "after": "lighthouse",
    "plot": [
     400,
@@ -116,7 +116,7 @@
   {
    "id": "igloo4",
    "type": "igloo",
-   "cost": 620,
+   "cost": 1285,
    "after": "tent",
    "plot": [
     70,
@@ -130,7 +130,7 @@
   {
    "id": "lamp",
    "type": "lamp",
-   "cost": 700,
+   "cost": 1455,
    "after": "igloo4",
    "plot": [
     290,
@@ -142,7 +142,7 @@
   {
    "id": "stage",
    "type": "stage",
-   "cost": 850,
+   "cost": 1770,
    "after": "hotspring",
    "plot": [
     330,
@@ -156,7 +156,7 @@
   {
    "id": "igloo5",
    "type": "igloo",
-   "cost": 1000,
+   "cost": 2080,
    "after": "lamp",
    "plot": [
     190,
@@ -170,7 +170,7 @@
   {
    "id": "rack2",
    "type": "rack2",
-   "cost": 1200,
+   "cost": 2495,
    "after": "igloo5",
    "plot": [
     525,
@@ -185,7 +185,7 @@
   {
    "id": "kite",
    "type": "kite",
-   "cost": 1350,
+   "cost": 2810,
    "after": "stage",
    "plot": [
     80,
@@ -197,7 +197,7 @@
   {
    "id": "igloo6",
    "type": "igloo",
-   "cost": 1600,
+   "cost": 3330,
    "after": "rack2",
    "plot": [
     600,
@@ -211,7 +211,7 @@
   {
    "id": "statue",
    "type": "statue",
-   "cost": 1900,
+   "cost": 3950,
    "after": "kite",
    "plot": [
     395,
@@ -223,7 +223,7 @@
   {
    "id": "igloo7",
    "type": "igloo",
-   "cost": 2300,
+   "cost": 4785,
    "after": "igloo6",
    "plot": [
     585,
@@ -237,7 +237,7 @@
   {
    "id": "snowman",
    "type": "snowman",
-   "cost": 900,
+   "cost": 1870,
    "after": "igloo3",
    "plot": [
     140,
@@ -249,7 +249,7 @@
   {
    "id": "pine",
    "type": "pine",
-   "cost": 260,
+   "cost": 540,
    "after": "igloo2",
    "plot": [
     470,
@@ -261,7 +261,7 @@
   {
    "id": "fence",
    "type": "fence",
-   "cost": 420,
+   "cost": 870,
    "after": "tent",
    "plot": [
     250,

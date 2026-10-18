@@ -40,16 +40,18 @@ export class RunSim {
     this.startIndex = startIndex;
 
     const isl = this.island;
+    // starting deeper in the journey: the village gives you a running start
+    const startMul = Math.max(modifiers.startSpeedMul || 1, startIndex > 0 ? 2.6 : 1);
     const p = {
-      x: isl.startX + 4, y: 0, vx: 0, vy: 0, s: this.P.startSpeed * (modifiers.startSpeedMul || 1),
+      x: isl.startX + 4, y: 0, vx: 0, vy: 0, s: this.P.startSpeed * startMul,
       ground: true, press: false, stun: 0, air: 0, fever: 0, chain: 0,
       flightMax: 0, milestone: 0, lastLand: null, angle: 0, slope: 0, ice: false,
     };
     p.y = isl.heightAt(p.x);
     this.p = p;
-    this.blizzardX = p.x - isl.blizzard.startGap;
+    this.blizzardX = p.x - this.startGapFor(isl);
     this.blizzardV = 0;
-    this.blizzardHold = tutorial ? balance.blizzard.tutorialDelay : 0.8;
+    this.blizzardHold = tutorial ? balance.blizzard.tutorialDelay : balance.blizzard.startHold;
     this.crossing = null;
     this.fishIndex = 0;
     this.pulling = [];
@@ -67,6 +69,13 @@ export class RunSim {
   _istat(i) {
     return this.islandStats[i] || (this.islandStats[i] = { fishValue: 0, gold: 0, perfect: 0, fevers: 0, rings: 0, maxHeight: 0 });
   }
+
+  // The chase is measured in time, not distance: the same seconds of breathing room on every
+  // island, whether the blizzard moves at 500 or 1600 units/s.
+  blizzardBase(isl = this.island) { return Math.max(300, isl.blizzard.speed * (1 - this.assist) * (this.modifiers.blizzardMul || 1)); }
+  maxGap(isl = this.island) { return this.balance.blizzard.maxGapSec * this.blizzardBase(isl); }
+  dangerGap(isl = this.island) { return this.balance.blizzard.dangerSec * this.blizzardBase(isl); }
+  startGapFor(isl) { return (isl.blizzard.startGapSec || this.balance.blizzard.startGapSec) * this.blizzardBase(isl); }
 
   get distanceUnits() { return this.p.x; }
   get distanceMeters() { return Math.max(0, Math.floor(this.p.x / this.balance.display.unitsPerMeter)); }
@@ -267,7 +276,7 @@ export class RunSim {
       if (!this.ghost) this.istat.perfect++;
     } else if (alpha > P.bonkAngle && !cloud && p.fever <= 0) {
       kind = 'bonk';
-      p.s = along * P.bonkKeep;
+      p.s = Math.max(along * P.bonkKeep, speed * P.bonkFloor);
       p.stun = P.bonkStun;
       p.chain = 0;
       this.stats.bonk++;
@@ -288,7 +297,7 @@ export class RunSim {
         p.fever = P.feverTime;
         this.stats.fevers++;
         if (!this.ghost) this.istat.fevers++;
-        this.blizzardX = Math.max(this.blizzardX - P.feverBlizzardPush, p.x - this.balance.blizzard.maxGap);
+        this.blizzardX = Math.max(this.blizzardX - this.balance.blizzard.feverPushSec * this.blizzardBase(), p.x - this.maxGap());
         this.emit('fever');
       } else if (kind === 'perfect' && p.fever > 0) {
         p.fever = Math.max(p.fever, P.feverTime * 0.6);
@@ -360,26 +369,32 @@ export class RunSim {
     const B = this.balance.blizzard;
     const isl = this.island;
     const gap = this.gap;
-    let v = (isl.blizzard.speed + isl.blizzard.accel * this.islandTime) * (1 - this.assist);
+    // warm-up: the blizzard starts each island at 65% speed and reaches full speed after 10 s,
+    // so a fresh start (or a new island) never ends in a few seconds
+    // (only on the island where the run started; a crossed island keeps the chase going)
+    const warm = this.islandsCleared > 0 ? 1 : 0.65 + 0.35 * Math.min(1, this.islandTime / B.warmup);
+    let v = (isl.blizzard.speed * warm + isl.blizzard.accel * this.islandTime) * (1 - this.assist);
     if (this.modifiers.blizzardMul) v *= this.modifiers.blizzardMul;
-    if (gap > B.maxGap) v += (gap - B.maxGap) * B.rubberBandMul;
+    const maxGap = this.maxGap();
+    if (gap > maxGap) v += (gap - maxGap) * B.rubberBandMul;
     if (this.blizzardHold > 0) {
       this.blizzardHold -= dt;
-      if (gap <= B.maxGap) v = 0;
+      if (gap <= maxGap) v = 0;
     }
     this.blizzardV = v;
     this.blizzardX += v * dt;
     const g2 = this.gap;
     if (g2 < this.stats.minGap) this.stats.minGap = g2;
-    const danger = g2 < B.dangerGap;
+    const dg = this.dangerGap();
+    const danger = g2 < dg;
     if (danger && !this._wasDanger) this.emit('danger');
-    if (!danger && this._wasDanger && g2 > B.dangerGap * 1.4) { this.stats.closeCalls++; this.emit('escape'); this._wasDanger = false; }
+    if (!danger && this._wasDanger && g2 > dg * 1.4) { this.stats.closeCalls++; this.emit('escape'); this._wasDanger = false; }
     if (danger) this._wasDanger = true;
     if (g2 <= 0) {
       if (this.scarfCharges > 0) {
         this.scarfCharges--;
         this.stats.secondWinds++;
-        this.blizzardX = this.p.x - this.scarfPush;
+        this.blizzardX = this.p.x - this.scarfPush * this.blizzardBase() / 1000;
         const p = this.p;
         if (p.ground) p.s = Math.min(this.maxSpeed(), p.s * 1.25 + 300);
         else p.vx += 300;
@@ -433,7 +448,7 @@ export class RunSim {
       p.s = Math.min(this.maxSpeed(), Math.max(c.speed * 0.9, 1100));
       p.vx = p.s * cos; p.vy = p.s * tmp[1] * cos;
       p.chain = 0;
-      this.blizzardX = p.x - next.blizzard.startGap;
+      this.blizzardX = p.x - this.startGapFor(next);
       this.blizzardHold = 1.2;
       this.state = 'run';
       this.crossing = null;

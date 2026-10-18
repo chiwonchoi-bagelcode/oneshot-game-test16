@@ -295,8 +295,8 @@ function renderProps() {
     input('intro', lv.intro || '', (v) => { lv.intro = v || null; }, 'text', ['', 'ice', 'wind', 'geyser', 'ring', 'cloud']),
   );
   el.insertAdjacentHTML('beforeend', '<h3>눈보라 Blizzard</h3>');
-  lv.blizzard = lv.blizzard || { startGap: 1200, speed: 700, accel: 6 };
-  for (const k of ['speed', 'accel', 'startGap']) el.append(input(k, lv.blizzard[k], (v) => { lv.blizzard[k] = v; }, 'number'));
+  lv.blizzard = lv.blizzard || { speed: 700, accel: 6 };
+  for (const k of ['speed', 'accel', 'startGapSec']) el.append(input(k, lv.blizzard[k], (v) => { lv.blizzard[k] = v; }, 'number'));
   el.insertAdjacentHTML('beforeend', '<h3>예상 강화 Expected upgrades (검증용)</h3>');
   lv.expect = lv.expect || { upgrades: {} };
   for (const k of ['flap', 'slide', 'magnet', 'glide', 'scarf']) el.append(input(k, lv.expect.upgrades[k] || 0, (v) => { lv.expect.upgrades[k] = v; }, 'number'));

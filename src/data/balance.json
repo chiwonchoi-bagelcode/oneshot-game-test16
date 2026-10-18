@@ -8,10 +8,10 @@
     "pressGravityMul": 1.9,
     "airPressGravityMul": 3.0,
     "groundFriction": 30,
-    "airDrag": 4e-05,
-    "groundDrag": 0.0001,
+    "airDrag": 5e-05,
+    "groundDrag": 0.00014,
     "minSpeed": 260,
-    "maxSpeed": 3000,
+    "maxSpeed": 2300,
     "startSpeed": 420,
     "radius": 40,
     "perfectAngle": 0.36,
@@ -24,7 +24,6 @@
     "feverChain": 3,
     "feverTime": 6.0,
     "feverSpeedMul": 1.18,
-    "feverBlizzardPush": 700,
     "iceAccelMul": 1.35,
     "iceFrictionMul": 0.15,
     "cloudBounce": 0.35,
@@ -46,14 +45,15 @@
       10,
       15,
       25
-    ]
+    ],
+    "bonkFloor": 0.32
   },
   "upgrades": {
     "flap": {
       "order": 1,
       "maxLevel": 10,
       "baseCost": 20,
-      "costGrowth": 1.52,
+      "costGrowth": 2.25,
       "values": [
         0,
         0.18,
@@ -74,8 +74,8 @@
     "slide": {
       "order": 2,
       "maxLevel": 10,
-      "baseCost": 35,
-      "costGrowth": 1.52,
+      "baseCost": 30,
+      "costGrowth": 2.25,
       "values": [
         0,
         0.08,
@@ -97,7 +97,7 @@
       "order": 3,
       "maxLevel": 8,
       "baseCost": 60,
-      "costGrowth": 1.55,
+      "costGrowth": 2.1,
       "values": [
         0,
         70,
@@ -116,8 +116,8 @@
     "glide": {
       "order": 4,
       "maxLevel": 8,
-      "baseCost": 110,
-      "costGrowth": 1.55,
+      "baseCost": 120,
+      "costGrowth": 2.15,
       "values": [
         0,
         0.1,
@@ -136,8 +136,8 @@
     "scarf": {
       "order": 5,
       "maxLevel": 5,
-      "baseCost": 250,
-      "costGrowth": 1.8,
+      "baseCost": 300,
+      "costGrowth": 2.4,
       "values": [
         0,
         1,
@@ -160,29 +160,34 @@
     }
   },
   "blizzard": {
-    "maxGap": 1500,
-    "dangerGap": 520,
     "rubberBandMul": 2.2,
-    "tutorialDelay": 9.0
+    "tutorialDelay": 9.0,
+    "warmup": 10,
+    "startHold": 2.0,
+    "maxGapSec": 2.4,
+    "dangerSec": 0.85,
+    "startGapSec": 2.1,
+    "feverPushSec": 1.0
   },
   "economy": {
     "fishValue": 1,
-    "goldFishValue": 10,
-    "distanceFishPerMeter": 0.025,
+    "goldFishValue": 8,
+    "distanceFishPerMeter": 0.01,
     "islandFirstBonus": [
       0,
       0,
-      60,
-      120,
-      200,
+      30,
+      50,
+      80,
+      110,
+      150,
+      190,
+      240,
       300,
-      420,
-      560,
-      720,
-      900,
-      1100
+      0
     ],
     "islandRepeatBonus": 0.15,
-    "populationBonusPerPenguin": 0.01
+    "populationBonusPerPenguin": 0.01,
+    "endlessIslandBonus": 40
   }
 }
