@@ -89,6 +89,7 @@ export class UI {
     el.appendChild(h('span', {}, text));
     el.classList.remove('hidden');
     el.classList.remove('show');
+    el.classList.toggle('low', this.stack.length > 0); // over a popup: show near the bottom, clear of its title
     void el.offsetWidth;
     el.classList.add('show');
     clearTimeout(this.toastTimer);

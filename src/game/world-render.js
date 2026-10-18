@@ -278,9 +278,10 @@ export class WorldRenderer {
         const sx = cam.toScreenX(g.x), sy = cam.toScreenY(y) + 8 * z;
         const t = this.time * 6 + g.x;
         if (!g.used) {
-          draw(ctx, 'plume_' + (Math.floor(t) % 4), sx, sy - 4 * z, z * 0.9, 0, 0.55, false, 0.6, 0.5 + 0.08 * Math.sin(t));
+          // a bubbling steam column marks a live geyser from far away
+          draw(ctx, 'plume_' + (Math.floor(t) % 4), sx, sy - 6 * z, z * 1.5, 0, 0.75, false, 0.8, 0.55 + 0.1 * Math.sin(t));
         }
-        draw(ctx, 'geyser_vent', sx, sy, z * 1.2);
+        draw(ctx, 'geyser_vent', sx, sy, z * 1.9);
       }
     }
   }
@@ -311,16 +312,36 @@ export class WorldRenderer {
     for (const w of isl.wind) {
       if (w.x + w.w < cam.left - 100 || w.x > cam.right + 100) continue;
       const gy = isl.heightAt(w.x + w.w / 2);
-      const sx = cam.toScreenX(w.x + w.w / 2);
-      const fr = Math.floor(this.time * 8) % 4;
-      const segH = 384 * 0.5 * 1.6;
-      for (let y = 0; y < w.h; y += segH / (z * 1.6) * z * 1.6 / z) {
-        const sy = cam.toScreenY(gy + y + segH * 0.5);
-        if (sy < -200 || sy > cam.H + 200) continue;
-        draw(ctx, 'wind_' + ((fr + Math.floor(y / 300)) % 4), sx, sy, z * 1.6 * (w.w / 320), 0, 0.7);
+      const x0 = cam.toScreenX(w.x), x1 = cam.toScreenX(w.x + w.w);
+      const yb = cam.toScreenY(gy), yt = cam.toScreenY(gy + w.h);
+      // soft column so the updraft reads at a glance
+      const g = ctx.createLinearGradient(x0, 0, x1, 0);
+      g.addColorStop(0, 'rgba(255,255,255,0)');
+      g.addColorStop(0.5, 'rgba(235,245,255,0.32)');
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(x0, yt, x1 - x0, yb - yt);
+      // rising swirls
+      const cx = (x0 + x1) / 2, span = yb - yt;
+      ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+      ctx.lineCap = 'round';
+      for (let k = 0; k < 7; k++) {
+        const ph = ((this.time * 0.45 + k / 7) % 1);
+        const y = yb - ph * span;
+        const r = (24 + 16 * Math.sin(k * 2.1)) * z * 2.2;
+        ctx.globalAlpha = Math.sin(ph * Math.PI) * 0.9;
+        ctx.lineWidth = Math.max(2, 7 * z);
+        ctx.beginPath();
+        ctx.ellipse(cx + Math.sin(this.time * 2 + k) * r * 0.4, y, r, r * 0.35, 0, Math.PI * 0.1, Math.PI * 1.6);
+        ctx.stroke();
       }
+      ctx.globalAlpha = 1;
+      const fr = Math.floor(this.time * 8) % 4;
+      draw(ctx, 'wind_' + fr, cx, yb - span * 0.25, z * 2.4, 0, 0.8);
+      draw(ctx, 'wind_' + ((fr + 2) % 4), cx, yb - span * 0.6, z * 2.4, 0, 0.6);
     }
   }
+
 
   drawRings(ctx, cam, isl, part) {
     const z = cam.z;

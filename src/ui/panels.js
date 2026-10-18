@@ -67,12 +67,13 @@ export class UpgradesPopup extends Popup {
       c.pips.innerHTML = '';
       for (let i = 0; i < U.maxLevel; i++) c.pips.appendChild(h('i', { class: i < lv ? 'on' : '' }));
       const now = upgradeDisplay(k, lv), next = upgradeDisplay(k, Math.min(U.maxLevel, lv + 1));
+      const fmtV = (v) => (k === 'magnet' ? v + 'm' : k === 'scarf' ? String(v) : (k === 'glide' ? '-' : '+') + v + '%');
       c.stat.innerHTML = '';
-      if (lv >= U.maxLevel) c.stat.appendChild(h('span', { class: 'stat-now' }, t(`up.${k}.stat`, { v: now })));
-      else {
-        c.stat.appendChild(h('span', { class: 'stat-now' }, lv === 0 && k !== 'scarf' ? t(`up.${k}.stat`, { v: 0 }) : t(`up.${k}.stat`, { v: now })));
+      c.stat.appendChild(h('span', { class: 'stat-label' }, t(`up.${k}.label`)));
+      c.stat.appendChild(h('span', { class: 'stat-now' }, fmtV(now)));
+      if (lv < U.maxLevel) {
         c.stat.appendChild(h('span', { class: 'stat-arrow' }, '→'));
-        c.stat.appendChild(h('span', { class: 'stat-next' }, t(`up.${k}.stat`, { v: next })));
+        c.stat.appendChild(h('span', { class: 'stat-next' }, fmtV(next)));
       }
       c.el.classList.toggle('locked', !unlocked);
       c.lock.classList.toggle('hidden', unlocked);
@@ -193,7 +194,7 @@ export class MapPopup extends Popup {
       r.info = h('div', { class: 'card-desc' });
       r.goals = h('div', { class: 'map-goals' });
       r.btn = button('', { cls: 'btn-buy', onTap: () => this.pick(i) });
-      r.el = h('div', { class: 'card map-card' }, h('div', { class: 'card-left' }, r.num), h('div', { class: 'card-mid' }, r.name, r.info, r.goals), h('div', { class: 'card-right' }, r.btn));
+      r.el = h('div', { class: 'card map-card' }, h('div', { class: 'map-row' }, h('div', { class: 'card-left' }, r.num), h('div', { class: 'card-mid' }, r.name, r.info), h('div', { class: 'card-right' }, r.btn)), r.goals);
       this.rows.push(r);
       this.list.appendChild(r.el);
     }
@@ -290,7 +291,7 @@ export class MissionsPopup extends Popup {
     this.bonus.innerHTML = '';
     const all = m.list.every((x) => x.claimed);
     if (all && !m.bonusClaimed) this.bonus.appendChild(button(t('mis.allDone') + ' +' + dailyData.missions.allDoneBonus, { icon: 'gift', iconSize: 30, cls: 'btn-primary btn-wide', onTap: () => { this.app.claimMissionBonus(); this.refresh(); } }));
-    else this.bonus.appendChild(h('div', { class: 'card-desc' }, icon('gift', 28), h('span', {}, all ? t('mis.allDone') : `${t('mis.allDone').replace('!', '')} +${dailyData.missions.allDoneBonus}`)));
+    else this.bonus.appendChild(h('div', { class: 'card-desc' }, icon('gift', 28), h('span', {}, all ? t('mis.allDone') : t('mis.bonus', { n: dailyData.missions.allDoneBonus }))));
     this.note.textContent = t('mis.refresh');
   }
 }

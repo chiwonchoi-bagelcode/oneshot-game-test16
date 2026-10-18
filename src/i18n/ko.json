@@ -95,7 +95,7 @@
  "vil.bonus": "판마다 물고기 +{p}%",
  "vil.next": "다음 건물",
  "vil.done": "모든 건물을 지었어요!",
- "vil.collect": "건조대 물고기 {n}마리 받기",
+ "vil.collect": "물고기 {n}마리 받기",
  "vil.rackEmpty": "건조대에 물고기가 쌓이는 중이에요",
  "vil.rack": "건조대",
  "vil.built": "{name} 완성!",
@@ -244,5 +244,11 @@
  "up.magnet.info": "펭귄 주변의 물고기를 끌어와요. 단계가 오를수록 더 먼 물고기까지 끌려와요.",
  "up.glide.info": "손을 떼고 내려오는 동안 덜 무겁게 떨어지고 공기 저항이 줄어서 더 멀리 날아가요.",
  "up.scarf.info": "눈보라에 잡히는 순간 털목도리로 버티고 앞으로 튀어 나가요. 한 판에 버티기 횟수만큼 쓸 수 있어요.",
- "up.more": "자세히"
+ "up.more": "자세히",
+ "mis.bonus": "할 일을 모두 마치면 +{n}",
+ "up.flap.label": "도약 힘",
+ "up.slide.label": "내리막 가속",
+ "up.magnet.label": "끌어오는 거리",
+ "up.glide.label": "떨어지는 속도",
+ "up.scarf.label": "버티기"
 }

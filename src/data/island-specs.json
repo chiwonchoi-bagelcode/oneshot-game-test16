@@ -508,7 +508,7 @@
     "wind": 0.15
    },
    "blizzard": {
-    "speed": 1520,
+    "speed": 1430,
     "accel": 8
    },
    "expect": {
@@ -590,7 +590,7 @@
     "wind": 0.2
    },
    "blizzard": {
-    "speed": 1680,
+    "speed": 1570,
     "accel": 9
    },
    "expect": {
@@ -683,7 +683,7 @@
     "ring": 0.4
    },
    "blizzard": {
-    "speed": 1880,
+    "speed": 1740,
     "accel": 10
    },
    "expect": {

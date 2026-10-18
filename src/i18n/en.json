@@ -95,7 +95,7 @@
  "vil.bonus": "+{p}% fish every run",
  "vil.next": "Next building",
  "vil.done": "You've built everything!",
- "vil.collect": "Collect {n} fish from the rack",
+ "vil.collect": "Collect {n} fish",
  "vil.rackEmpty": "Fish are drying on the rack",
  "vil.rack": "Fish rack",
  "vil.built": "{name} is ready!",
@@ -244,5 +244,11 @@
  "up.magnet.info": "Pulls fish around the penguin toward you. Each level reaches fish farther away.",
  "up.glide.info": "While you're not holding on the way down, you fall more gently and the air slows you less, so you fly farther.",
  "up.scarf.info": "When the blizzard catches you, your scarf holds on and you burst forward. Works as many times per run as your Escapes count.",
- "up.more": "Details"
+ "up.more": "Details",
+ "mis.bonus": "Finish all tasks for +{n}",
+ "up.flap.label": "Takeoff power",
+ "up.slide.label": "Downhill speed-up",
+ "up.magnet.label": "Reach",
+ "up.glide.label": "Fall speed",
+ "up.scarf.label": "Escapes"
 }

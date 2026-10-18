@@ -193,8 +193,11 @@ export class BlizzardRenderer {
     const close = caught ? 1 : Math.max(0, Math.min(1, 1 - gap / sim.maxGap()));
     this.closeS = (this.closeS ?? close) + (close - (this.closeS ?? close)) * 0.12;
     const c = this.closeS;
-    const size = Math.min(W * 0.7, 330);
-    const targetX = caught ? W * 0.34 : W * (-0.1 + 0.48 * c);
+    const size = Math.min(W * 0.62, 290);
+    // never let the spirit cover the penguin: its right edge stops short of it
+    const pxs = cam.toScreenX(sim.p.x);
+    const limit = pxs - 26 - size * 0.32;
+    const targetX = caught ? W * 0.34 : Math.min(limit, W * (-0.1 + 0.48 * c));
     this.faceX += (targetX - this.faceX) * 0.15;
     const wallX = this.faceX + size * 0.12;
     // wall body

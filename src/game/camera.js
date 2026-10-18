@@ -66,7 +66,7 @@ export class Camera {
     this.y = this.lowY;
     // keep the penguin under the top margin even mid-zoom
     const py = this.toScreenY(p.y);
-    if (py < topMargin) this.y -= (topMargin - py) / this.z;
+    if (py < topMargin) this.y += (topMargin - py) / this.z;
     if (this.override) {
       const o = this.override;
       this.x = o.x; this.y = o.y; this.z = o.z; this.anchor = o.anchor ?? this.anchor;

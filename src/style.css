@@ -172,11 +172,14 @@ button { font-family: inherit; color: inherit; }
 .card-left { flex: none; }
 .card-mid { flex: 1; min-width: 0; text-align: left; }
 .card-right { flex: none; display: flex; flex-direction: column; align-items: center; gap: 4px; max-width: 42%; }
-.card-head { display: flex; align-items: baseline; gap: 8px; }
+.card-head { display: flex; align-items: baseline; gap: 4px 8px; flex-wrap: wrap; }
 .card-name { font-size: 19px; line-height: 1.2; word-break: keep-all; }
 .card-lv { font-size: 15px; color: var(--muted); white-space: nowrap; }
 .card-desc { font-size: 14px; color: var(--muted); line-height: 1.35; margin-top: 2px; word-break: keep-all; display: flex; gap: 6px; align-items: center; }
-.card-stat { font-size: 14px; margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.card-stat { font-size: 14px; margin-top: 4px; display: flex; flex-wrap: wrap; gap: 2px 5px; align-items: baseline; }
+.stat-label { color: var(--muted); width: 100%; font-size: 13px; }
+.stat-now { font-size: 15px; }
+.stat-next { font-size: 15px; }
 .stat-now { color: var(--muted); }
 .stat-arrow { color: var(--muted); }
 .stat-next { color: #1d8a4e; }
@@ -243,7 +246,7 @@ button { font-family: inherit; color: inherit; }
 .info-text { font-size: 17px; line-height: 1.5; text-align: center; word-break: keep-all; white-space: pre-line; }
 .pop-ico { flex: none; }
 
-.toast { position: absolute; left: 50%; top: calc(var(--sat) + 74px); transform: translateX(-50%); display: flex; align-items: center; gap: 8px; background: rgba(255,250,241,.97); border: 3px solid var(--ink); border-radius: 18px; padding: 8px 16px 8px 10px; font-size: 17px; box-shadow: 0 5px 0 rgba(30,35,80,.35); z-index: 30; max-width: calc(100% - 32px); pointer-events: none !important; line-height: 1.3; }
+.toast { position: absolute; left: 50%; top: calc(var(--sat) + 74px); width: max-content; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; background: rgba(255,250,241,.97); border: 3px solid var(--ink); border-radius: 18px; padding: 8px 16px 8px 10px; font-size: 17px; box-shadow: 0 5px 0 rgba(30,35,80,.35); z-index: 30; max-width: calc(100% - 32px); pointer-events: none !important; line-height: 1.3; }
 .toast.show { animation: toast 2.3s ease-out forwards; }
 @keyframes toast { 0% { opacity: 0; transform: translateX(-50%) translateY(-16px); } 10% { opacity: 1; transform: translateX(-50%); } 85% { opacity: 1; } 100% { opacity: 0; } }
 
@@ -259,3 +262,9 @@ button { font-family: inherit; color: inherit; }
 
 .card-ico-btn { border: none; background: none; padding: 0; position: relative; cursor: pointer; }
 .card-ico-btn .more { position: absolute; right: -4px; bottom: -4px; width: 22px; height: 22px; border-radius: 50%; background: #7fd3ff; border: 2px solid var(--ink); font-size: 14px; line-height: 18px; color: #fff; text-shadow: 0 1px 0 var(--ink); }
+
+.map-card { flex-direction: column; align-items: stretch; gap: 6px; }
+.map-row { display: flex; align-items: center; gap: 10px; }
+.map-card .map-goals { margin: 0 0 0 62px; }
+.map-card .goal { font-size: 14px; }
+.toast.low { top: auto; bottom: calc(var(--sab) + 28px); }

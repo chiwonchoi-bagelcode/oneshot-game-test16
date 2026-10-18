@@ -42,12 +42,18 @@ export class RunSim {
     const isl = this.island;
     // starting deeper in the journey: the village gives you a running start
     const startMul = Math.max(modifiers.startSpeedMul || 1, startIndex > 0 ? 2.6 : 1);
+    // with a running start, begin partway down the first slope (past the crest's curve) so the
+    // first thing that happens is a slide, not an accidental hop
+    const fast = startMul > 1.5;
+    const sx0 = fast ? isl.startX + (isl.xs[1] - isl.xs[0]) * 0.56 : isl.startX + 4;
     const p = {
-      x: isl.startX + 4, y: 0, vx: 0, vy: 0, s: this.P.startSpeed * startMul,
+      x: sx0, y: 0, vx: 0, vy: 0, s: this.P.startSpeed * startMul,
       ground: true, press: false, stun: 0, air: 0, fever: 0, chain: 0,
       flightMax: 0, milestone: 0, lastLand: null, angle: 0, slope: 0, ice: false,
     };
     p.y = isl.heightAt(p.x);
+    isl.sample(p.x, tmp);
+    p.slope = tmp[1];
     this.p = p;
     this.blizzardX = p.x - this.startGapFor(isl);
     this.blizzardV = 0;
