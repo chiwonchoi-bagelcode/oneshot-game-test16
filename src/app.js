@@ -18,6 +18,7 @@ import { HUD } from './ui/hud.js';
 import { TitleScreen, HubScreen, ResultsScreen } from './ui/screens.js';
 import { UpgradesPopup, BuildPopup, MapPopup, MissionsPopup, DailyPopup, TodayPopup, SettingsPopup, PausePopup, InfoPopup, ConfirmPopup } from './ui/panels.js';
 import { makeBot } from './core/bot.js';
+import audioList from './data/audio-list.json';
 export { makeBot };
 
 const UPM = balance.display.unitsPerMeter;
@@ -84,17 +85,27 @@ export class App {
     this.save.write();
   }
 
+  // Sound loads after the game is already playable. Over http(s) the MP3 files are fetched
+  // directly; from file:// (where fetch is blocked) the base64 script packs are used instead.
   loadAudioPacks() {
     const base = (window.ASSET_BASE || '') + 'assets/';
-    const add = (file) => new Promise((res) => {
-      const sc = document.createElement('script');
-      sc.src = base + file;
-      sc.async = true;
-      sc.onload = res; sc.onerror = res;
-      document.head.appendChild(sc);
-    });
-    window.__audioPack = (pack, loops) => { this.audio.addPack(pack); if (loops) Object.assign(this.audio.loopPoints, loops); };
-    add('audio-sfx.js').then(() => add('audio-music.js'));
+    Object.assign(this.audio.loopPoints, Object.fromEntries(Object.entries(audioList.loops).map(([k, v]) => [k, v])));
+    const viaScripts = () => {
+      const add = (file) => new Promise((res) => {
+        const sc = document.createElement('script');
+        sc.src = base + file;
+        sc.async = true;
+        sc.onload = res; sc.onerror = res;
+        document.head.appendChild(sc);
+      });
+      window.__audioPack = (pack) => this.audio.addPack(pack);
+      return add('audio-sfx.js').then(() => add('audio-music.js'));
+    };
+    if (!/^https?:/.test(location.protocol)) { viaScripts(); return; }
+    const one = (name) => fetch(base + 'audio/' + name + '.mp3').then((r) => { if (!r.ok) throw new Error(name); return r.arrayBuffer(); }).then((ab) => this.audio.addBuffer(name, ab));
+    Promise.all(audioList.sfx.map(one))
+      .then(() => Promise.all(['music_theme', 'music_run', 'music_run_layer'].map(one)))
+      .catch(() => viaScripts());
   }
 
   buildUI() {
@@ -276,6 +287,7 @@ export class App {
     this.audio.playMusic('theme');
     this.village.sync(this.state);
     this.ui.show('hub');
+    if (this.pendingHatch) { this.pendingHatch = false; setTimeout(() => { this.audio.play('hatch'); this.ui.toast(t('vil.eggHatched'), 'egg'); }, 700); }
     requestAnimationFrame(() => this.layoutVillage());
     this.ui.screens.hub.refresh();
     if (!this.autoPopupDone) {
@@ -394,6 +406,7 @@ export class App {
     for (const u of applied.unlocks) this.analytics.track('feature_unlock', { feature: u });
     for (const g of applied.goals) this.analytics.track('goal_complete', { island: g.island, goal: g.goal.type });
     for (const hb of applied.hatched) this.analytics.track('egg_hatched', { id: hb.id });
+    if (applied.hatched.length) this.pendingHatch = true;
     this.analytics.track('currency_earn', { source: 'run', amount: applied.rewards.total });
     this.analytics.track('run_end', {
       mode: this.runMode, distance: res.distance, traveled: Math.round(res.traveledM), fish: applied.rewards.total, island: res.islandIndex,
@@ -530,6 +543,7 @@ export class App {
   }
 
   villageTap(id) {
+    this.audio.play('chirp', { rate: 0.9 + Math.random() * 0.3 });
     if (id === 'rack') { this.collectRack(); return; }
     if (id === 'site') { this.openBuild(); return; }
     const b = E.BUILDING[id];

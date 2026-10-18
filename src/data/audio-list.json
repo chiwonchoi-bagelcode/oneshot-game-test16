@@ -1,0 +1,53 @@
+{
+ "sfx": [
+  "arrive",
+  "bonk",
+  "build",
+  "buy",
+  "caught",
+  "chirp",
+  "danger",
+  "escape",
+  "fanfare",
+  "fever",
+  "fish",
+  "flap",
+  "geyser",
+  "gold",
+  "gust",
+  "hatch",
+  "height",
+  "land",
+  "launch",
+  "loop_slide",
+  "loop_wind",
+  "perfect",
+  "record",
+  "results",
+  "ring",
+  "secondwind",
+  "takeoff",
+  "ui_close",
+  "ui_open",
+  "ui_tap"
+ ],
+ "music": [
+  "music_run",
+  "music_run_layer",
+  "music_theme"
+ ],
+ "loops": {
+  "run": [
+   0,
+   58.181814
+  ],
+  "run_layer": [
+   0,
+   58.181814
+  ],
+  "theme": [
+   0,
+   40.0
+  ]
+ }
+}

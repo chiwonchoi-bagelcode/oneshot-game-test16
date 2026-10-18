@@ -1,0 +1,15 @@
+<html><body><script>
+async function go(){
+  const ctx = new OfflineAudioContext(2, 44100, 44100);
+  const out = {};
+  for (const f of ['music_run.mp3','music_theme.mp3']) {
+    const buf = await fetch(f).then(r=>r.arrayBuffer());
+    const ab = await ctx.decodeAudioData(buf);
+    const d = ab.getChannelData(0);
+    let first = 0; while (first < d.length && Math.abs(d[first]) < 1e-4) first++;
+    out[f] = {len: ab.length, sr: ab.sampleRate, firstNonZero: first};
+  }
+  document.title = JSON.stringify(out);
+}
+go();
+</script></body></html>

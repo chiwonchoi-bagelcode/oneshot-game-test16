@@ -31,8 +31,10 @@ export class UpgradesPopup extends Popup {
       c.stat = h('div', { class: 'card-stat' });
       c.btn = button('', { cls: 'btn-buy', onTap: () => this.buy(k) });
       c.lock = h('div', { class: 'card-lock hidden' }, icon('lock', 26), h('span', {}));
+      c.more = h('button', { class: 'card-ico-btn', type: 'button', 'aria-label': t('up.more') }, c.icon, h('span', { class: 'more' }, 'i'));
+      onTap(c.more, () => app.showInfo(`up.${k}.name`, t(`up.${k}.info`), k));
       c.el = h('div', { class: 'card up-card' },
-        h('div', { class: 'card-left' }, c.icon),
+        h('div', { class: 'card-left' }, c.more),
         h('div', { class: 'card-mid' }, h('div', { class: 'card-head' }, c.name, c.lv), c.pips, c.desc, c.stat),
         h('div', { class: 'card-right' }, c.btn, c.lock));
       this.cards[k] = c;
@@ -119,6 +121,8 @@ export class BuildPopup extends Popup {
     }
   }
 
+  onOpen() { this.sorted = false; super.onOpen(); }
+
   refresh() {
     const s = this.app.state;
     this.summary.innerHTML = '';
@@ -132,20 +136,26 @@ export class BuildPopup extends Popup {
       } else this.rackRow.appendChild(h('div', { class: 'rack-wait' }, icon('fish', 24), h('span', {}, t('vil.rackEmpty'))));
     } else this.rackRow.classList.add('hidden');
     const avail = new Set(availableBuildings(s).map((b) => b.id));
-    // order: available (cheapest first), then built; hide locked ones
-    const order = [...BUILDINGS].sort((a, b) => {
-      const ra = avail.has(a.id) ? 0 : isBuilt(s, a.id) ? 1 : 2, rb = avail.has(b.id) ? 0 : isBuilt(s, b.id) ? 1 : 2;
-      return ra - rb || a.cost - b.cost;
-    });
+    // order is decided when the popup opens (available cheapest first, then built) and then kept,
+    // so building something never moves the list under the player's finger
+    if (!this.sorted) {
+      this.order = [...BUILDINGS].sort((a, b) => {
+        const ra = avail.has(a.id) ? 0 : isBuilt(s, a.id) ? 1 : 2, rb = avail.has(b.id) ? 0 : isBuilt(s, b.id) ? 1 : 2;
+        return ra - rb || a.cost - b.cost;
+      });
+      for (const b of this.order) this.list.appendChild(this.rows[b.id].el);
+      this.sorted = true;
+      this.shownIds = new Set();
+    }
     let shownAvail = 0;
-    for (const b of order) {
+    for (const b of this.order) {
       const r = this.rows[b.id];
       const built = isBuilt(s, b.id);
       const av = avail.has(b.id);
-      const visible = built || (av && shownAvail < 6);
+      const visible = built || (av && (shownAvail < 6 || this.shownIds.has(b.id)));
       if (av) shownAvail++;
+      if (visible) this.shownIds.add(b.id);
       r.el.classList.toggle('hidden', !visible);
-      this.list.appendChild(r.el); // keeps DOM order = sort order without rebuilding
       r.name.textContent = t(r.k.name);
       r.desc.textContent = t(r.k.desc, r.k.vars);
       r.done.classList.toggle('hidden', !built);

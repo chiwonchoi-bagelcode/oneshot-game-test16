@@ -5,8 +5,8 @@ import { draw, frame, bg } from './assets.js';
 import { BUILDINGS, isBuilt, availableBuildings, babyStage, rackAmount, iglooCount } from '../meta/economy.js';
 import BIOMES from '../data/biomes.json';
 
-const VW = 1200, VH = 700;
-const DEPTH = [0.78, 0.92, 1.06];
+const VW = 640, VH = 900;
+const depthAt = (y) => 0.42 + (y - 300) / 560 * 0.66; // farther up = smaller
 
 export class VillageScene {
   constructor(app) {
@@ -45,11 +45,11 @@ export class VillageScene {
       const old = keep[w.id];
       if (old) { old.stage = w.stage; old.home = w.home; return old; }
       const [hx, hy] = w.home.plot;
-      return { ...w, x: hx + (Math.random() - 0.5) * 160, y: hy + 20 + Math.random() * 40, tx: hx, ty: hy + 30, wait: Math.random() * 2, dir: 1, walkT: 0, spawnT: 0 };
+      return { ...w, x: hx + (Math.random() - 0.5) * 120, y: hy + 14 + Math.random() * 30, tx: hx, ty: hy + 24, wait: Math.random() * 2, dir: 1, walkT: 0, spawnT: 0 };
     });
     this.eggs = state.village.eggs.map((e) => {
       const b = BUILDINGS.find((x) => e.id.startsWith(x.id));
-      return b ? { x: b.plot[0] + 90, y: b.plot[1] + 18, depth: b.plot[2] } : null;
+      return b ? { x: b.plot[0] + 70 * depthAt(b.plot[1]), y: b.plot[1] + 12 } : null;
     }).filter(Boolean);
     this.next = availableBuildings(state)[0] || null;
     this.state = state;
@@ -57,16 +57,35 @@ export class VillageScene {
 
   setRegion(top, h) { this.region = { top, h }; }
 
-  layout(W) {
-    const R = this.region;
-    const sc = Math.max(R.h / 620, W / 980);
-    const vw = W / sc;
-    const maxPan = Math.max(0, (VW - vw) / 2);
-    this.pan = Math.max(-maxPan, Math.min(maxPan, this.pan));
-    return { sc, ox: W / 2 - (VW / 2 + this.pan) * sc, oy: R.top + R.h - 660 * sc, maxPan };
+  // Frame what has been built: a lone igloo fills the view, a full village zooms out to fit.
+  focusBox() {
+    let x0 = 330 - 150, x1 = 330 + 150, y0 = 470, y1 = 880;
+    const grow = (x, y, r = 130) => { x0 = Math.min(x0, x - r); x1 = Math.max(x1, x + r); y0 = Math.min(y0, y - r * 1.6); y1 = Math.max(y1, y + 30); };
+    if (this.state) for (const b of BUILDINGS) if (isBuilt(this.state, b.id)) grow(b.plot[0], b.plot[1], 170 * depthAt(b.plot[1]));
+    if (this.next) grow(this.next.plot[0], this.next.plot[1], 150 * depthAt(this.next.plot[1]));
+    return [Math.max(0, x0), Math.min(VW, x1), Math.max(250, y0), 890];
   }
 
-  drag(dx) { const L = this.lastLayout; if (L) this.pan -= dx / L.sc; }
+  layout(W) {
+    const R = this.region;
+    const full = Math.min(W / VW, R.h / 690);
+    const [x0, x1, y0, y1] = this.focusBox();
+    const fit = Math.min(W / (x1 - x0), R.h / (y1 - y0 + 60));
+    const target = Math.max(full, Math.min(full * 1.7, fit));
+    this.zoom = this.zoom ? this.zoom + (target - this.zoom) * 0.05 : target;
+    const sc = this.zoom;
+    const cx = (x0 + x1) / 2;
+    const vw = W / sc;
+    const minC = vw / 2, maxC = VW - vw / 2;
+    const centerX = minC > maxC ? VW / 2 : Math.max(minC, Math.min(maxC, cx + this.pan));
+    return { sc, ox: W / 2 - centerX * sc, oy: R.top + R.h - 885 * sc, maxPan: 0 };
+  }
+
+  drag(dx) {
+    const L = this.lastLayout;
+    if (!L) return;
+    this.pan = Math.max(-VW / 2, Math.min(VW / 2, this.pan - dx / L.sc));
+  }
 
   update(dt) {
     this.time += dt;
@@ -86,8 +105,8 @@ export class VillageScene {
         if (!p.follow) {
           p.wait = 1.5 + Math.random() * 3.5;
           const [hx, hy] = p.home.plot;
-          p.tx = Math.max(60, Math.min(VW - 60, hx + (Math.random() - 0.5) * 360));
-          p.ty = Math.max(380, Math.min(670, hy + 10 + (Math.random() - 0.3) * 120));
+          p.tx = Math.max(30, Math.min(VW - 30, hx + (Math.random() - 0.5) * 260));
+          p.ty = Math.max(330, Math.min(840, hy + 8 + (Math.random() - 0.3) * 110));
         }
         p.walking = false;
       } else {
@@ -101,10 +120,12 @@ export class VillageScene {
     if (Math.random() < dt * 2) {
       for (const b of BUILDINGS) {
         if (b.sprite === 'igloo_2' && this.state && isBuilt(this.state, b.id)) {
-          this.puffs.push({ x: b.plot[0] + 55, y: b.plot[1] - 210 * DEPTH[b.plot[2]] * 0.7, t: 0, d: b.plot[2] });
+          const k = depthAt(b.plot[1]);
+          this.puffs.push({ x: b.plot[0] + 55 * k, y: b.plot[1] - 230 * k, t: 0, k });
         }
         if (b.type === 'hotspring' && this.state && isBuilt(this.state, b.id) && Math.random() < 0.5) {
-          this.puffs.push({ x: b.plot[0] + (Math.random() - 0.5) * 140, y: b.plot[1] - 40, t: 0, d: b.plot[2] });
+          const k = depthAt(b.plot[1]);
+          this.puffs.push({ x: b.plot[0] + (Math.random() - 0.5) * 150 * k, y: b.plot[1] - 40 * k, t: 0, k });
         }
       }
     }
@@ -131,9 +152,9 @@ export class VillageScene {
     if (sun) ctx.drawImage(sun, W * 0.55, Y(40), W * 0.6, W * 0.6);
     // far mountains + sea + the next island on the horizon
     const far = bg('far_dawn');
-    const horizon = Y(300);
+    const horizon = Y(290);
     if (far) {
-      const fw = 1024 * sc * 1.05, fh = 384 * sc * 1.05;
+      const fw = 1024 * sc * 0.9, fh = 384 * sc * 0.9;
       const off = ((-this.pan * sc * 0.2) % fw + fw) % fw;
       for (let x = off - fw; x < W; x += fw) ctx.drawImage(far, x, horizon - fh * 0.78, fw + 1, fh);
     }
@@ -141,25 +162,28 @@ export class VillageScene {
     sg.addColorStop(0, B.sea[0]); sg.addColorStop(1, B.sea[1]);
     ctx.fillStyle = sg; ctx.fillRect(0, horizon - 2, W, 160 * sc);
     const nextIsle = this.app.nextIslandBiome ? bg('isle_' + this.app.nextIslandBiome()) : null;
-    if (nextIsle) ctx.drawImage(nextIsle, X(980), horizon - 70 * sc, 230 * sc, 115 * sc);
+    if (nextIsle) ctx.drawImage(nextIsle, X(470), horizon - 62 * sc, 200 * sc, 100 * sc);
     // clouds
     for (let i = 0; i < 3; i++) {
-      const cx = ((i * 420 + this.time * (8 + i * 4)) % (VW + 400)) - 200;
-      draw(ctx, 'cloud_' + i, X(cx), Y(90 + i * 55), sc * 0.75, 0, 0.9);
+      const cx = ((i * 300 + this.time * (8 + i * 4)) % (VW + 400)) - 200;
+      draw(ctx, 'cloud_' + i, X(cx), Y(110 + i * 45), sc * 0.6, 0, 0.9);
     }
     // ground plateau
     ctx.fillStyle = '#eef5ff';
     ctx.beginPath();
-    ctx.moveTo(X(-400), Y(330));
-    for (let x = -400; x <= VW + 400; x += 40) ctx.lineTo(X(x), Y(318 + Math.sin(x * 0.006) * 14 + Math.sin(x * 0.017) * 6));
+    ctx.moveTo(X(-400), Y(305));
+    for (let x = -400; x <= VW + 400; x += 30) ctx.lineTo(X(x), Y(300 + Math.sin(x * 0.011) * 10 + Math.sin(x * 0.031) * 4));
     ctx.lineTo(X(VW + 400), H + 10); ctx.lineTo(X(-400), H + 10); ctx.closePath();
-    const gg = ctx.createLinearGradient(0, Y(320), 0, Y(700));
+    const gg = ctx.createLinearGradient(0, Y(300), 0, Y(900));
     gg.addColorStop(0, '#ffffff'); gg.addColorStop(0.5, '#e6effc'); gg.addColorStop(1, '#c9d9f2');
     ctx.fillStyle = gg; ctx.fill();
     ctx.strokeStyle = '#1e2350'; ctx.lineWidth = Math.max(2, 5 * sc); ctx.stroke();
     // paths
-    ctx.strokeStyle = 'rgba(160,185,230,0.55)'; ctx.lineWidth = 34 * sc; ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(X(80), Y(640)); ctx.quadraticCurveTo(X(420), Y(470), X(600), Y(520)); ctx.quadraticCurveTo(X(820), Y(580), X(1140), Y(470)); ctx.stroke();
+    ctx.strokeStyle = 'rgba(160,185,230,0.5)'; ctx.lineCap = 'round';
+    ctx.lineWidth = 46 * sc;
+    ctx.beginPath(); ctx.moveTo(X(330), Y(900)); ctx.quadraticCurveTo(X(300), Y(700), X(330), Y(610)); ctx.quadraticCurveTo(X(380), Y(500), X(330), Y(380)); ctx.stroke();
+    ctx.lineWidth = 26 * sc;
+    ctx.beginPath(); ctx.moveTo(X(20), Y(600)); ctx.quadraticCurveTo(X(330), Y(540), X(630), Y(560)); ctx.stroke();
     // collect drawables with depth sorting by y
     const items = [];
     this.hit = [];
@@ -167,24 +191,25 @@ export class VillageScene {
     for (const b of BUILDINGS) {
       if (!st || !isBuilt(st, b.id)) continue;
       if (b.upgradeOf) continue; // drawn as its base building
-      const [x, y, d] = b.plot;
-      items.push({ y, fn: () => this.drawBuilding(ctx, b, X(x), Y(y), sc * DEPTH[d]) });
+      const [x, y] = b.plot;
+      items.push({ y, fn: () => this.drawBuilding(ctx, b, X(x), Y(y), sc * depthAt(y)) });
     }
     if (this.next) {
-      const [x, y, d] = this.next.plot;
+      const [x, y] = this.next.plot;
+      const k = depthAt(y);
       const already = this.next.upgradeOf && isBuilt(st, this.next.upgradeOf);
-      if (!already) items.push({ y, fn: () => { draw(ctx, 'site', X(x), Y(y), sc * DEPTH[d] * 0.8, 0, 0.92); this.addHit('site', X(x), Y(y), 260 * sc * DEPTH[d], 220 * sc * DEPTH[d]); } });
+      if (!already) items.push({ y, fn: () => { draw(ctx, 'site', X(x), Y(y), sc * k * 0.8, 0, 0.92); this.addHit('site', X(x), Y(y) - 90 * sc * k, 260 * sc * k, 220 * sc * k); } });
     }
     for (const e of this.eggs || []) {
-      items.push({ y: e.y, fn: () => draw(ctx, Math.sin(this.time * 3 + e.x) > 0.85 ? 'nest_crack' : 'nest_1', X(e.x), Y(e.y), sc * DEPTH[e.depth] * 0.7, Math.sin(this.time * 6 + e.x) * 0.04) });
+      items.push({ y: e.y, fn: () => draw(ctx, Math.sin(this.time * 3 + e.x) > 0.85 ? 'nest_crack' : 'nest_1', X(e.x), Y(e.y), sc * depthAt(e.y) * 0.75, Math.sin(this.time * 6 + e.x) * 0.04) });
     }
     for (const p of this.penguins) {
       items.push({ y: p.y, fn: () => this.drawPenguin(ctx, p, X(p.x), Y(p.y), sc) });
     }
     // the player's penguin stands at the front, ready to go
-    const hero = { y: 690, fn: () => {
+    const hero = { y: 870, fn: () => {
       const fr = Math.floor(this.time * 1.2) % 5 === 0 ? 'p_idle_1' : 'p_idle_0';
-      draw(ctx, fr, X(600 + this.pan * 0), Y(690), sc * 0.62);
+      draw(ctx, fr, X(330), Y(872), sc * 0.5);
     } };
     items.push(hero);
     items.sort((a, b) => a.y - b.y);
@@ -192,14 +217,14 @@ export class VillageScene {
     // smoke
     for (const p of this.puffs) {
       const k = p.t / 3;
-      draw(ctx, 'puff_1', X(p.x + k * 30), Y(p.y - k * 120), sc * (0.5 + k * 0.8) * DEPTH[p.d], 0, 0.7 * (1 - k));
+      draw(ctx, 'puff_1', X(p.x + k * 30), Y(p.y - k * 120), sc * (0.5 + k * 0.8) * p.k, 0, 0.7 * (1 - k));
     }
     // rack bubble
     if (st) {
       const n = rackAmount(st);
       const rack = BUILDINGS.find((b) => b.id === 'fishrack');
       if (n > 0 && isBuilt(st, 'fishrack')) {
-        const bx = X(rack.plot[0]), by = Y(rack.plot[1] - 250) + Math.sin(this.time * 3) * 4;
+        const bx = X(rack.plot[0]), by = Y(rack.plot[1] - 260 * depthAt(rack.plot[1])) + Math.sin(this.time * 3) * 4;
         this.drawBubble(ctx, bx, by, '+' + n, sc);
         this.addHit('rack', bx, by + 20 * sc, 150 * sc, 110 * sc, 2);
       }
@@ -235,7 +260,7 @@ export class VillageScene {
     if (this.buildAnim && this.buildAnim.id === b.id) {
       const t = this.buildAnim.t;
       k = t < 0.4 ? t / 0.4 * 1.15 : 1 + 0.15 * Math.max(0, 1 - (t - 0.4) / 0.4);
-      if (t < 0.6 && Math.random() < 0.5) this.puffs.push({ x: b.plot[0] + (Math.random() - 0.5) * 200, y: b.plot[1] - 20, t: 1.5, d: b.plot[2] });
+      if (t < 0.6 && Math.random() < 0.5) this.puffs.push({ x: b.plot[0] + (Math.random() - 0.5) * 200 * depthAt(b.plot[1]), y: b.plot[1] - 20, t: 1.5, k: depthAt(b.plot[1]) });
     }
     if (b.type === 'kite') {
       draw(ctx, 'kite', x + Math.sin(this.time) * 20 * s, y - 330 * s + Math.sin(this.time * 1.4) * 14 * s, s * 0.8, Math.sin(this.time * 1.1) * 0.15);
@@ -264,7 +289,7 @@ export class VillageScene {
     } else {
       name = p.walking ? `v_${p.kind}_walk${step}` : `v_${p.kind}_${blink ? 'blink' : 'idle'}`;
     }
-    const depth = 0.75 + (p.y - 380) / 300 * 0.35;
+    const depth = depthAt(p.y) * 1.1;
     const k = p.spawnT < 1 ? 0.3 + 0.7 * p.spawnT : 1;
     draw(ctx, name, x, y, sc * depth * 0.62 * k, 0, 1, p.dir < 0);
   }

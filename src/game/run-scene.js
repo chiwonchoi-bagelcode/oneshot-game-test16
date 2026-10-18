@@ -11,6 +11,9 @@ import { draw, preloadBg } from './assets.js';
 import { t } from '../i18n/i18n.js';
 
 const TAU = Math.PI * 2;
+// pitch steps for chained sounds: D major pentatonic, so streams of fish play a little tune
+const PENTA = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24];
+const step = (k) => Math.pow(2, PENTA[Math.max(0, Math.min(PENTA.length - 1, k))] / 12);
 
 export function endlessGenerator(levels) {
   const biomes = ['cloud', 'stars', 'aurora', 'sunset'];
@@ -302,7 +305,7 @@ export class RunScene {
       case 'height': {
         const m = e.meters;
         this.floaters.add(t('fx.height', { m }), { x: p.x, y: p.y + 170, size: 22 + e.level * 2, color: '#bff0ff', life: 1.1, kind: 'word' });
-        au.play('height', { rate: 1 + e.level * 0.12 });
+        au.play('height', { rate: step(e.level) });
         if (e.level >= 2) hp.pulse('light');
         break;
       }
@@ -311,7 +314,7 @@ export class RunScene {
           const c = p.chain;
           const label = c >= 3 ? t('fx.perfect3') : c === 2 ? t('fx.perfect2') : t('fx.perfect1');
           this.word(label, { size: 24 + Math.min(4, c) * 3, color: c >= 3 ? '#ffe27a' : '#ffffff' });
-          au.play('perfect', { rate: 1 + Math.min(6, c - 1) * 0.0833 * 2 });
+          au.play('perfect', { rate: step(c - 1) });
           hp.pulse(c >= 3 ? 'medium' : 'light');
           this.burst(p.x, p.y + 30, c >= 3 ? 'sparkle_gold' : 'sparkle', 6 + Math.min(6, c * 2), 360, 0.55);
           this.parts.spawn({ sprite: 'ringwave', x: p.x, y: p.y + 20, life: 0.4, scale: 0.4, scale1: 1.5, alpha: 0.8 });
@@ -340,7 +343,7 @@ export class RunScene {
       case 'feverEnd': au.setFever(false); break;
       case 'fish': {
         this.fishCombo++; this.fishComboT = 0.6;
-        au.play(e.gold ? 'gold' : 'fish', { rate: e.gold ? 1 : 1 + Math.min(12, this.fishCombo - 1) * 0.06 });
+        au.play(e.gold ? 'gold' : 'fish', { rate: e.gold ? 1 : step((this.fishCombo - 1) % 8) });
         this.parts.spawn({ sprite: e.gold ? 'sparkle_gold' : 'sparkle', x: e.x, y: e.y, life: 0.35, scale: e.gold ? 0.9 : 0.5, scale1: 0.1, vr: 6 });
         if (e.gold) {
           this.floaters.add('+' + e.value, { x: e.x, y: e.y + 40, size: 26, color: '#ffe27a', life: 0.9, kind: 'num' });

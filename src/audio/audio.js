@@ -46,19 +46,33 @@ export class Audio {
     if (this.ctx) this.decodeAll();
   }
 
+  // raw MP3 bytes fetched over http(s)
+  addBuffer(name, ab) {
+    this.rawAB = this.rawAB || {};
+    this.rawAB[name] = ab;
+    if (this.ctx) this.decodeAll();
+  }
+
   decodeAll() {
+    for (const [k, ab] of Object.entries(this.rawAB || {})) {
+      if (this.buffers[k] || this.buffers[k] === null) continue;
+      this.buffers[k] = null;
+      this.ctx.decodeAudioData(ab.slice(0), (buf) => this.onDecoded(k, buf), () => { this.buffers[k] = undefined; });
+    }
     for (const [k, b64] of Object.entries(this.raw)) {
       if (this.buffers[k] || this.buffers[k] === null) continue;
       this.buffers[k] = null; // decoding
       const bin = atob(b64);
       const arr = new Uint8Array(bin.length);
       for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
-      this.ctx.decodeAudioData(arr.buffer, (buf) => {
-        this.buffers[k] = buf;
-        if (this.music.want && (k === 'music_' + this.music.want || k === 'music_' + this.music.want + '_layer')) this.playMusic(this.music.want, true);
-        if (k === 'loop_slide' || k === 'loop_wind') this.ensureLoop(k);
-      }, () => { this.buffers[k] = undefined; });
+      this.ctx.decodeAudioData(arr.buffer, (buf) => this.onDecoded(k, buf), () => { this.buffers[k] = undefined; });
     }
+  }
+
+  onDecoded(k, buf) {
+    this.buffers[k] = buf;
+    if (this.music.want && (k === 'music_' + this.music.want || k === 'music_' + this.music.want + '_layer')) this.playMusic(this.music.want, true);
+    if (k === 'loop_slide' || k === 'loop_wind') this.ensureLoop(k);
   }
 
   setMusic(on) {

@@ -300,7 +300,7 @@ export function applyRun(state, res, levels, mode = 'main') {
   return out;
 }
 
-export function goalReward(islandIndex) { return 30 + islandIndex * 25; }
+export function goalReward(islandIndex) { return 25 + islandIndex * 25; }
 
 // ---------------------------------------------------------------- unlocks
 export const FEATURES = {

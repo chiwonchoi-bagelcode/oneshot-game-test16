@@ -56,11 +56,11 @@
    "goals": [
     {
      "type": "fish",
-     "n": 40
+     "n": 60
     },
     {
      "type": "perfect",
-     "n": 3
+     "n": 5
     }
    ]
   },

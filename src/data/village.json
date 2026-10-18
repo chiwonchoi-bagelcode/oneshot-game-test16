@@ -1,26 +1,281 @@
 {
-  "_comment": "Village build list. Buildings appear in the build menu once 'after' is built. Plot = position in the 1200x700 village scene (x, ground y, depth layer 0 back..2 front). effect keys are read by meta/economy.js.",
-  "buildings": [
-    { "id": "igloo1", "type": "igloo", "cost": 15, "after": null, "plot": [600, 470, 1], "sprite": "igloo_0", "effect": { "family": 2 } },
-    { "id": "fishrack", "type": "fishrack", "cost": 55, "after": "igloo1", "plot": [860, 455, 1], "sprite": "fishrack", "effect": { "rackPerHour": 6 } },
-    { "id": "igloo2", "type": "igloo", "cost": 90, "after": "igloo1", "plot": [380, 455, 1], "sprite": "igloo_1", "effect": { "family": 2 } },
-    { "id": "workshop", "type": "workshop", "cost": 150, "after": "igloo2", "plot": [180, 470, 1], "sprite": "workshop", "effect": { "startPush": 1 } },
-    { "id": "lighthouse", "type": "lighthouse", "cost": 220, "after": "fishrack", "plot": [1080, 430, 0], "sprite": "lighthouse", "effect": { "islandSelect": 1 } },
-    { "id": "igloo3", "type": "igloo", "cost": 300, "after": "workshop", "plot": [720, 560, 2], "sprite": "igloo_2", "effect": { "family": 2 } },
-    { "id": "tent", "type": "tent", "cost": 380, "after": "igloo3", "plot": [460, 575, 2], "sprite": "tent", "effect": { "fishPct": 5 } },
-    { "id": "hotspring", "type": "hotspring", "cost": 480, "after": "lighthouse", "plot": [960, 580, 2], "sprite": "hotspring", "effect": { "firstRunDouble": 1 } },
-    { "id": "igloo4", "type": "igloo", "cost": 620, "after": "tent", "plot": [260, 585, 2], "sprite": "igloo_1", "effect": { "family": 2 } },
-    { "id": "lamp", "type": "lamp", "cost": 700, "after": "igloo4", "plot": [560, 520, 1], "sprite": "lamp", "effect": {} },
-    { "id": "stage", "type": "stage", "cost": 850, "after": "hotspring", "plot": [620, 380, 0], "sprite": "stage", "effect": { "festival": 1 } },
-    { "id": "igloo5", "type": "igloo", "cost": 1000, "after": "lamp", "plot": [860, 360, 0], "sprite": "igloo_2", "effect": { "family": 2 } },
-    { "id": "rack2", "type": "rack2", "cost": 1200, "after": "igloo5", "plot": [860, 455, 1], "sprite": "fishrack", "effect": { "rackPerHour": 14 }, "upgradeOf": "fishrack" },
-    { "id": "kite", "type": "kite", "cost": 1350, "after": "stage", "plot": [380, 330, 0], "sprite": "kite", "effect": {} },
-    { "id": "igloo6", "type": "igloo", "cost": 1600, "after": "rack2", "plot": [120, 360, 0], "sprite": "igloo_0", "effect": { "family": 2 } },
-    { "id": "statue", "type": "statue", "cost": 1900, "after": "kite", "plot": [600, 640, 2], "sprite": "statue", "effect": {} },
-    { "id": "igloo7", "type": "igloo", "cost": 2300, "after": "igloo6", "plot": [1100, 600, 2], "sprite": "igloo_1", "effect": { "family": 2 } },
-    { "id": "snowman", "type": "snowman", "cost": 900, "after": "igloo3", "plot": [80, 600, 2], "sprite": "snowman_v", "effect": {} },
-    { "id": "pine", "type": "pine", "cost": 260, "after": "igloo2", "plot": [1000, 360, 0], "sprite": "pine_v", "effect": {} },
-    { "id": "fence", "type": "fence", "cost": 420, "after": "tent", "plot": [760, 650, 2], "sprite": "fence", "effect": {} }
-  ],
-  "stages": [0, 1, 4, 9, 15]
+ "_comment": "Village build list. Buildings appear in the build menu once 'after' is built. plot = [x, ground y] in the 640x900 portrait village scene (higher y = closer, drawn bigger). effect keys are read by meta/economy.js.",
+ "buildings": [
+  {
+   "id": "igloo1",
+   "type": "igloo",
+   "cost": 15,
+   "after": null,
+   "plot": [
+    330,
+    600
+   ],
+   "sprite": "igloo_0",
+   "effect": {
+    "family": 2
+   }
+  },
+  {
+   "id": "fishrack",
+   "type": "fishrack",
+   "cost": 55,
+   "after": "igloo1",
+   "plot": [
+    525,
+    515
+   ],
+   "sprite": "fishrack",
+   "effect": {
+    "rackPerHour": 6
+   }
+  },
+  {
+   "id": "igloo2",
+   "type": "igloo",
+   "cost": 90,
+   "after": "igloo1",
+   "plot": [
+    140,
+    545
+   ],
+   "sprite": "igloo_1",
+   "effect": {
+    "family": 2
+   }
+  },
+  {
+   "id": "workshop",
+   "type": "workshop",
+   "cost": 150,
+   "after": "igloo2",
+   "plot": [
+    110,
+    425
+   ],
+   "sprite": "workshop",
+   "effect": {
+    "startPush": 1
+   }
+  },
+  {
+   "id": "lighthouse",
+   "type": "lighthouse",
+   "cost": 220,
+   "after": "fishrack",
+   "plot": [
+    565,
+    380
+   ],
+   "sprite": "lighthouse",
+   "effect": {
+    "islandSelect": 1
+   }
+  },
+  {
+   "id": "igloo3",
+   "type": "igloo",
+   "cost": 300,
+   "after": "workshop",
+   "plot": [
+    470,
+    700
+   ],
+   "sprite": "igloo_2",
+   "effect": {
+    "family": 2
+   }
+  },
+  {
+   "id": "tent",
+   "type": "tent",
+   "cost": 380,
+   "after": "igloo3",
+   "plot": [
+    215,
+    690
+   ],
+   "sprite": "tent",
+   "effect": {
+    "fishPct": 5
+   }
+  },
+  {
+   "id": "hotspring",
+   "type": "hotspring",
+   "cost": 480,
+   "after": "lighthouse",
+   "plot": [
+    400,
+    450
+   ],
+   "sprite": "hotspring",
+   "effect": {
+    "firstRunDouble": 1
+   }
+  },
+  {
+   "id": "igloo4",
+   "type": "igloo",
+   "cost": 620,
+   "after": "tent",
+   "plot": [
+    70,
+    720
+   ],
+   "sprite": "igloo_1",
+   "effect": {
+    "family": 2
+   }
+  },
+  {
+   "id": "lamp",
+   "type": "lamp",
+   "cost": 700,
+   "after": "igloo4",
+   "plot": [
+    290,
+    480
+   ],
+   "sprite": "lamp",
+   "effect": {}
+  },
+  {
+   "id": "stage",
+   "type": "stage",
+   "cost": 850,
+   "after": "hotspring",
+   "plot": [
+    330,
+    365
+   ],
+   "sprite": "stage",
+   "effect": {
+    "festival": 1
+   }
+  },
+  {
+   "id": "igloo5",
+   "type": "igloo",
+   "cost": 1000,
+   "after": "lamp",
+   "plot": [
+    190,
+    368
+   ],
+   "sprite": "igloo_2",
+   "effect": {
+    "family": 2
+   }
+  },
+  {
+   "id": "rack2",
+   "type": "rack2",
+   "cost": 1200,
+   "after": "igloo5",
+   "plot": [
+    525,
+    515
+   ],
+   "sprite": "fishrack",
+   "effect": {
+    "rackPerHour": 14
+   },
+   "upgradeOf": "fishrack"
+  },
+  {
+   "id": "kite",
+   "type": "kite",
+   "cost": 1350,
+   "after": "stage",
+   "plot": [
+    80,
+    330
+   ],
+   "sprite": "kite",
+   "effect": {}
+  },
+  {
+   "id": "igloo6",
+   "type": "igloo",
+   "cost": 1600,
+   "after": "rack2",
+   "plot": [
+    600,
+    650
+   ],
+   "sprite": "igloo_0",
+   "effect": {
+    "family": 2
+   }
+  },
+  {
+   "id": "statue",
+   "type": "statue",
+   "cost": 1900,
+   "after": "kite",
+   "plot": [
+    395,
+    800
+   ],
+   "sprite": "statue",
+   "effect": {}
+  },
+  {
+   "id": "igloo7",
+   "type": "igloo",
+   "cost": 2300,
+   "after": "igloo6",
+   "plot": [
+    585,
+    785
+   ],
+   "sprite": "igloo_1",
+   "effect": {
+    "family": 2
+   }
+  },
+  {
+   "id": "snowman",
+   "type": "snowman",
+   "cost": 900,
+   "after": "igloo3",
+   "plot": [
+    140,
+    810
+   ],
+   "sprite": "snowman_v",
+   "effect": {}
+  },
+  {
+   "id": "pine",
+   "type": "pine",
+   "cost": 260,
+   "after": "igloo2",
+   "plot": [
+    470,
+    335
+   ],
+   "sprite": "pine_v",
+   "effect": {}
+  },
+  {
+   "id": "fence",
+   "type": "fence",
+   "cost": 420,
+   "after": "tent",
+   "plot": [
+    250,
+    815
+   ],
+   "sprite": "fence",
+   "effect": {}
+  }
+ ],
+ "stages": [
+  0,
+  1,
+  4,
+  9,
+  15
+ ]
 }

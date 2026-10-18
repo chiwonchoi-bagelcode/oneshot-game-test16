@@ -168,7 +168,7 @@
   "economy": {
     "fishValue": 1,
     "goldFishValue": 10,
-    "distanceFishPerMeter": 0.04,
+    "distanceFishPerMeter": 0.025,
     "islandFirstBonus": [
       0,
       0,
