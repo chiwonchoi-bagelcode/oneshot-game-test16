@@ -14,10 +14,12 @@ export class Haptics {
     this.enabled = true;
     this.supported = typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function';
     this.last = 0;
+    this.armed = false; // browsers only allow vibration after the first tap
+    if (typeof window !== 'undefined') window.addEventListener('pointerdown', () => { this.armed = true; }, { once: true, capture: true });
   }
 
   pulse(kind) {
-    if (!this.enabled || !this.supported) return;
+    if (!this.enabled || !this.supported || !this.armed) return;
     const now = performance.now();
     if (kind === 'light' && now - this.last < 70) return; // avoid buzzing on fish streams
     this.last = now;

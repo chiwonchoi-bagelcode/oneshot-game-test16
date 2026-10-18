@@ -194,7 +194,7 @@ export class ResultsScreen {
     this.up.classList.toggle('pulse', !!data.pointUpgrade);
     this.again.classList.toggle('pulse', !data.pointUpgrade);
     this.skip.textContent = t('res.tapSkip');
-    setTimeout(() => this.el.classList.add('done'), 1800);
+    this.app.later(() => this.el.classList.add('done'), 1800);
   }
 
   refresh() {

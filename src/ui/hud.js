@@ -50,7 +50,7 @@ export class HUD {
     this.bannerEl.className = 'banner ' + (kind || '');
     void this.bannerEl.offsetWidth;
     this.bannerEl.classList.add('show');
-    clearTimeout(this.bt);
-    this.bt = setTimeout(() => { this.bannerEl.classList.remove('show'); this.bannerEl.classList.add('hidden'); }, 2600);
+    this.app.cancel(this.bt);
+    this.bt = this.app.later(() => { this.bannerEl.classList.remove('show'); this.bannerEl.classList.add('hidden'); }, 2600);
   }
 }

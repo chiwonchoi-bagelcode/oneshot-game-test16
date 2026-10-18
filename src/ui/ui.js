@@ -92,8 +92,8 @@ export class UI {
     el.classList.toggle('low', this.stack.length > 0); // over a popup: show near the bottom, clear of its title
     void el.offsetWidth;
     el.classList.add('show');
-    clearTimeout(this.toastTimer);
-    this.toastTimer = setTimeout(() => { el.classList.remove('show'); el.classList.add('hidden'); }, 2300);
+    this.app.cancel(this.toastTimer);
+    this.toastTimer = this.app.later(() => { el.classList.remove('show'); el.classList.add('hidden'); }, 2300);
   }
 }
 

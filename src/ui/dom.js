@@ -71,12 +71,14 @@ export function setBadge(btn, n) {
 }
 
 // counts a number up over time; returns a function to jump to the end
+const clock = () => (window.__now ? window.__now() : performance.now());
+
 export function countUp(el, from, to, dur, fmt) {
-  const t0 = performance.now();
+  const t0 = clock();
   let done = false;
-  const step = (tm) => {
+  const step = () => {
     if (done) return;
-    const k = Math.min(1, (tm - t0) / dur);
+    const k = Math.min(1, (clock() - t0) / dur);
     const e = 1 - Math.pow(1 - k, 3);
     el.textContent = fmt(from + (to - from) * e);
     if (k < 1) requestAnimationFrame(step); else done = true;

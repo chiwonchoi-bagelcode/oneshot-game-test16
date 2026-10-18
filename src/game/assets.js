@@ -6,11 +6,18 @@ export const atlas = { frames: {}, pages: {}, images: {} };
 const bgImages = {};
 const bgPending = {};
 
+// draw once into a tiny canvas so decode + GPU upload happen at load time, not mid-run
+const warm = typeof document !== 'undefined' ? document.createElement('canvas').getContext('2d') : null;
+function warmUp(img) { try { if (warm) warm.drawImage(img, 0, 0, 1, 1); } catch (e) { /* ignore */ } }
+
 function loadImage(src) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.decoding = 'async';
-    img.onload = () => resolve(img);
+    img.onload = () => {
+      const done = () => { warmUp(img); resolve(img); };
+      if (img.decode) img.decode().then(done, done); else done();
+    };
     img.onerror = () => reject(new Error('image ' + src));
     img.src = src;
   });

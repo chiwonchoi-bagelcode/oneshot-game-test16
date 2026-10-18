@@ -69,7 +69,11 @@ export class App {
       document.fonts && document.fonts.load ? Promise.race([document.fonts.load('20px GameFont', '펭귄 Penguin 0123'), new Promise((r) => setTimeout(r, 1500))]) : null,
     ]);
     if (fill) fill.style.width = '90%';
-    this.loadAudioPacks();
+    // sound downloads after the first screen is up (or at the first touch), off the critical path
+    let audioStarted = false;
+    const startAudio = () => { if (!audioStarted) { audioStarted = true; this.loadAudioPacks(); } };
+    setTimeout(startAudio, 1200);
+    window.addEventListener('pointerdown', startAudio, { once: true, capture: true });
     this.buildUI();
     this.bindInput();
     this.dailyCheck(true);
@@ -83,7 +87,8 @@ export class App {
     else if (!this.state.tutorialDone && this.state.runs === 0) this.showTitle();
     else this.goHub(true);
     requestAnimationFrame((tm) => this.frame(tm));
-    if (typeof __DEV__ !== 'undefined' && __DEV__) import('./ui/debug.js').then((m) => m.installDebug(this)).catch((e) => console.warn(e));
+    this.installCapture();
+    if (typeof __DEV__ !== 'undefined' && __DEV__ && !/nodebug=1/.test(location.search)) import('./ui/debug.js').then((m) => m.installDebug(this)).catch((e) => console.warn(e));
     this.save.write();
   }
 
@@ -206,6 +211,8 @@ export class App {
     });
     window.addEventListener('keyup', (e) => { if ((e.code === 'Space' || e.code === 'ArrowDown') && this.run) this.run.setPress(false); });
     document.addEventListener('pointerdown', () => this.audio.unlock(), { capture: true });
+    document.addEventListener('gesturestart', (e) => e.preventDefault());
+    document.addEventListener('dblclick', (e) => e.preventDefault());
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         this.audio.suspend();
@@ -227,15 +234,63 @@ export class App {
     window.addEventListener('pagehide', () => this.save.write());
   }
 
+  // ---------------------------------------------------------------- capture (dev build only)
+  // Deterministic frame stepping for the trailer and store screenshots: the real game, advanced
+  // one fixed frame at a time, with every sound effect logged so the video's audio lines up.
+  installCapture() {
+    if (typeof __DEV__ === 'undefined' || !__DEV__) return;
+    const app = this;
+    window.__cap = {
+      log: [],
+      t: 0,
+      start() {
+        app.capturing = true;
+        window.__now = () => window.__cap.t * 1000;
+        app.run.capture = true;
+        const orig = app.audio.play.bind(app.audio);
+        app.audio.play = (name, o = {}) => { window.__cap.log.push({ t: window.__cap.t, name, rate: o.rate || 1, volume: o.volume ?? 1 }); orig(name, o); };
+        const om = app.audio.playMusic.bind(app.audio);
+        app.audio.playMusic = (name, force) => { window.__cap.log.push({ t: window.__cap.t, music: name }); om(name, force); };
+        const os = app.audio.setFever.bind(app.audio);
+        app.audio.setFever = (on) => { window.__cap.log.push({ t: window.__cap.t, fever: on }); os(on); };
+      },
+      step(dt = 1 / 30, n = 1) {
+        for (let i = 0; i < n; i++) {
+          app.tick(dt); window.__cap.t += dt;
+          for (const a of document.getAnimations()) { try { a.pause(); a.currentTime = (a.currentTime || 0) + dt * 1000; } catch (e) { /* finished */ } }
+        }
+      },
+    };
+  }
+
   // ---------------------------------------------------------------- loop
   frame(tm) {
     requestAnimationFrame((x) => this.frame(x));
+    if (this.capturing) return;
     const cap = this.mode === 'run' ? this.frameCap : 30; // menus run at 30fps to save battery
     if (this.lastFrame && tm - this.lastFrame < 1000 / cap - 2) return;
     const dt = this.lastFrame ? Math.min(0.05, (tm - this.lastFrame) / 1000) : 1 / 60;
     this.lastFrame = tm;
     this.fpsAcc += dt; this.fpsN++;
     if (this.fpsAcc >= 1) { this.fps = this.fpsN / this.fpsAcc; this.fpsAcc = 0; this.fpsN = 0; this.autoTune(); }
+    this.tick(dt);
+  }
+
+  // game-clock timers (UI banners, toasts) so they stay in step with frame-by-frame capture
+  later(fn, ms) {
+    const id = ++this._timerId || (this._timerId = 1);
+    (this._timers || (this._timers = [])).push({ id, at: (this.appTime || 0) + ms / 1000, fn });
+    return id;
+  }
+
+  cancel(id) { if (this._timers) this._timers = this._timers.filter((x) => x.id !== id); }
+
+  tick(dt) {
+    this.appTime = (this.appTime || 0) + dt;
+    if (this._timers && this._timers.length) {
+      const due = this._timers.filter((x) => x.at <= this.appTime);
+      if (due.length) { this._timers = this._timers.filter((x) => x.at > this.appTime); for (const x of due) x.fn(); }
+    }
     const ctx = this.ctx;
     ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     if (this.mode === 'run' || this.mode === 'title' || this.mode === 'results') {
